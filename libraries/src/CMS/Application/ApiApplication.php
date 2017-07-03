@@ -167,7 +167,7 @@ final class ApiApplication extends CMSApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function getRouter()
+	public static function getApiRouter()
 	{
 		return JFactory::getContainer()->get('ApiRouter');
 	}
