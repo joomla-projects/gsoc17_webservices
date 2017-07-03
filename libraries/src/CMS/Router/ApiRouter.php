@@ -41,46 +41,46 @@ class ApiRouter extends Router
 			array(
 				'method' => 'GET',
 				'pattern' => $baseName,
-				'controller' => $controller . '@display',
+				'controller' => $controller . '.display',
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'GET',
 				'pattern' => $baseName . '/new',
-				'controller' => $controller . '@add',
+				'controller' => $controller . '.add',
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'GET',
 				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '@display',
+				'controller' => $controller . '.display',
 				'rules' => array('id' => '(\d+)'),
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'GET',
 				'pattern' => $baseName . '/:id/edit',
-				'controller' => $controller . '@edit',
+				'controller' => $controller . '.edit',
 				'rules' => array('id' => '(\d+)'),
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'POST',
 				'pattern' => $baseName,
-				'controller' => $controller . '@add',
+				'controller' => $controller . '.add',
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'PUT',
 				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '@edit',
+				'controller' => $controller . '.edit',
 				'rules' => array('id' => '(\d+)'),
 				'defaults' => $defaults
 			),
 			array(
 				'method' => 'DELETE',
 				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '@delete',
+				'controller' => $controller . '.delete',
 				'rules' => array('id' => '(\d+)'),
 				'defaults' => $defaults
 			),
