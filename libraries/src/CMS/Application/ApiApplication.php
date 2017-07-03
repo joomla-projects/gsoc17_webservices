@@ -46,7 +46,6 @@ final class ApiApplication extends CMSApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-
 	public function __construct(\JInput $input = null, Registry $config = null, WebClient $client = null, Container $container = null)
 	{
 		// Register the application name
@@ -160,8 +159,6 @@ final class ApiApplication extends CMSApplication
 	/**
 	 * Returns the application Router object.
 	 *
-	 * @param   string  $name     The name of the application.
-	 * @param   array   $options  An optional associative array of configuration settings.
 	 *
 	 * @return  ApiRouter
 	 *
