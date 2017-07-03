@@ -24,6 +24,13 @@ class ApiRouter extends Router
 	 */
 	protected static $instances = array();
 
+	/**
+	 * Constructor.
+	 *
+	 * @param   array  $maps  An optional array of route maps
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
 	public function __construct(array $maps = [])
 	{
 		parent::__construct($maps);
@@ -33,7 +40,7 @@ class ApiRouter extends Router
 	 * Returns an ApiRouter object, only creating it if it
 	 * doesn't already exist.
 	 *
-	 * @param   string  $name   The name (optional) of the ApiRouter class to instantiate.
+	 * @param   string  $name     The name (optional) of the ApiRouter class to instantiate.
 	 * @param   array   $options  An associative array of options
 	 *
 	 * @return  ApiRouter  An ApiRouter object.
@@ -67,6 +74,17 @@ class ApiRouter extends Router
 		return self::$instances[$name];
 	}
 
+	/**
+	 * Creates routes map for CRUD
+	 *
+	 * @param   string  $baseName   The base name of the component.
+	 * @param   string  $controller   The name of the controller that contains CRUD functions.
+	 * @param   array   $defaults    An array of default values that are used when the URL is matched.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
 	public function createCRUDRoutes($baseName, $controller, $defaults = array())
 	{
 		$routes = array(
