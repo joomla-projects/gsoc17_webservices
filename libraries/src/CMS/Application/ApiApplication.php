@@ -52,7 +52,7 @@ final class ApiApplication extends CMSApplication
 		// Register the application name
 		$this->name = 'japi';
 
-		// Register the client ID 
+		// Register the client ID
 		$this->clientId = 3;
 
 		// Set format to JSON (uses JDocumentJson)
@@ -134,5 +134,41 @@ final class ApiApplication extends CMSApplication
 		// The API application should not need to use a template
 		return 'system';
 	}
-}
 
+	/**
+	 * Route the application.
+	 *
+	 * Routing is the process of examining the request environment to determine which
+	 * component should receive the request. The component optional parameters
+	 * are then set in the request object to be processed when the application is being
+	 * dispatched.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function route()
+	{
+		$uri = \JUri::getInstance();
+		$router = static::getRouter();
+
+		// Trigger the onBeforeApiRoute event.
+		PluginHelper::importPlugin('system');
+		$this->triggerEvent('onBeforeApiRoute', &$router);
+	}
+
+	/**
+	 * Returns the application Router object.
+	 *
+	 * @param   string  $name     The name of the application.
+	 * @param   array   $options  An optional associative array of configuration settings.
+	 *
+	 * @return  ApiRouter
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function getRouter($name = null, array $options = array())
+	{
+		return ApiRouter::getInstance($name, $options);
+	}
+}
