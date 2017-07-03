@@ -153,7 +153,7 @@ final class ApiApplication extends CMSApplication
 		$router = static::getRouter();
 
 		// Trigger the onBeforeApiRoute event.
-		PluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('webservices');
 		$this->triggerEvent('onBeforeApiRoute', &$router);
 	}
 
