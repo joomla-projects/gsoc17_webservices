@@ -159,7 +159,6 @@ final class ApiApplication extends CMSApplication
 	/**
 	 * Returns the application Router object.
 	 *
-	 *
 	 * @return  ApiRouter
 	 *
 	 * @since   __DEPLOY_VERSION__
