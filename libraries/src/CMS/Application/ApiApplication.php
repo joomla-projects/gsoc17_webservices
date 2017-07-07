@@ -23,14 +23,6 @@ use Joomla\CMS\Router\ApiRouter;
 final class ApiApplication extends CMSApplication
 {
 	/**
-	 * The API router.
-	 *
-	 * @var    ApiRouter
-	 * @since  __DEPLOY_VERSION__
-	 */
-	protected $router;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param   \JInput    $input      An optional argument to provide dependency injection for the application's input
@@ -62,12 +54,6 @@ final class ApiApplication extends CMSApplication
 
 		// Set the root in the URI based on the application name
 		\JUri::root(null, str_ireplace('/' . $this->getName(), '', \JUri::base(true)));
-
-		/**
-		 * Setup the router
-		 * TODO: Router class not ready
-		 * $this->router = new ApiRouter();
-		 */
 	}
 
 
@@ -163,7 +149,7 @@ final class ApiApplication extends CMSApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function getApiRouter()
+	public function getApiRouter()
 	{
 		return JFactory::getContainer()->get('ApiRouter');
 	}
