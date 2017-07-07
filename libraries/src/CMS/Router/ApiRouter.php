@@ -17,14 +17,6 @@ use Joomla\Router\Router;
 class ApiRouter extends Router
 {
 	/**
-	 * Router instances container.
-	 *
-	 * @var    array
-	 * @since  __DEPLOY_VERSION__
-	 */
-	protected static $instances = array();
-
-	/**
 	 * Creates routes map for CRUD
 	 *
 	 * @param   string  $baseName    The base name of the component.
@@ -87,4 +79,47 @@ class ApiRouter extends Router
 		);
 		$this->addRoutes($routes);
 	}
+
+	/**
+		 * Parse the given route and return the name of a controller mapped to the given route.
+		 *
+		 * @param   string  $route   The route string for which to find and execute a controller.
+		 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
+		 *
+		 * @return  array   An array containing the controller and the matched variables.
+		 *
+		 * @since   __DEPLOY_VERSION__
+		 * @throws  \InvalidArgumentException
+		 */
+		public function parseRoute($route, $method = 'GET')
+		{
+			$method = strtoupper($method);
+			if (! array_key_exists($method, $this->routes))
+			{
+				throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
+			}
+			// Get the path from the route and remove and leading or trailing slash.
+			$route = trim(parse_url($route, PHP_URL_PATH), ' /');
+			// Iterate through all of the known routes looking for a match.
+			foreach ($this->routes[$method] as $rule)
+			{
+				if (preg_match($rule['regex'], $route, $matches))
+				{
+					// If we have gotten this far then we have a positive match.
+					$vars = $rule['defaults'];
+					foreach ($rule['vars'] as $i => $var)
+					{
+						$vars[$var] = $matches[$i + 1];
+					}
+
+					$controller = preg_split("/[.]+/", $rule['controller']);
+
+					return [
+						'controller' => $controller,
+						'vars'       => $vars
+					];
+				}
+			}
+			throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+		}
 }
