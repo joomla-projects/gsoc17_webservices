@@ -91,35 +91,39 @@ class ApiRouter extends Router
 		 * @since   __DEPLOY_VERSION__
 		 * @throws  \InvalidArgumentException
 		 */
-		public function parseRoute($route, $method = 'GET')
+	public function parseRoute($route, $method = 'GET')
+	{
+		$method = strtoupper($method);
+
+		if (! array_key_exists($method, $this->routes))
 		{
-			$method = strtoupper($method);
-			if (! array_key_exists($method, $this->routes))
-			{
-				throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
-			}
-			// Get the path from the route and remove and leading or trailing slash.
-			$route = trim(parse_url($route, PHP_URL_PATH), ' /');
-			// Iterate through all of the known routes looking for a match.
-			foreach ($this->routes[$method] as $rule)
-			{
-				if (preg_match($rule['regex'], $route, $matches))
-				{
-					// If we have gotten this far then we have a positive match.
-					$vars = $rule['defaults'];
-					foreach ($rule['vars'] as $i => $var)
-					{
-						$vars[$var] = $matches[$i + 1];
-					}
-
-					$controller = preg_split("/[.]+/", $rule['controller']);
-
-					return [
-						'controller' => $controller,
-						'vars'       => $vars
-					];
-				}
-			}
-			throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
 		}
+
+		// Get the path from the route and remove and leading or trailing slash.
+		$route = trim(parse_url($route, PHP_URL_PATH), ' /');
+
+		// Iterate through all of the known routes looking for a match.
+		foreach ($this->routes[$method] as $rule)
+		{
+			if (preg_match($rule['regex'], $route, $matches))
+			{
+				// If we have gotten this far then we have a positive match.
+				$vars = $rule['defaults'];
+
+				foreach ($rule['vars'] as $i => $var)
+				{
+					$vars[$var] = $matches[$i + 1];
+				}
+
+				$controller = preg_split("/[.]+/", $rule['controller']);
+
+				return [
+					'controller' => $controller,
+					'vars'       => $vars
+				];
+			}
+		}
+		throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
+	}
 }
