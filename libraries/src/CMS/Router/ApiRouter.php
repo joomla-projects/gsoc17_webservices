@@ -81,21 +81,21 @@ class ApiRouter extends Router
 	}
 
 	/**
-		 * Parse the given route and return the name of a controller mapped to the given route.
-		 *
-		 * @param   string  $route   The route string for which to find and execute a controller.
-		 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
-		 *
-		 * @return  array   An array containing the controller and the matched variables.
-		 *
-		 * @since   __DEPLOY_VERSION__
-		 * @throws  \InvalidArgumentException
-		 */
+	 * Parse the given route and return the name of a controller mapped to the given route.
+	 *
+	 * @param   string  $route   The route string for which to find and execute a controller.
+	 * @param   string  $method  Request method to match. One of GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE or PATCH
+	 *
+	 * @return  array   An array containing the controller and the matched variables.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \InvalidArgumentException
+	 */
 	public function parseRoute($route, $method = 'GET')
 	{
 		$method = strtoupper($method);
 
-		if (! array_key_exists($method, $this->routes))
+		if (!array_key_exists($method, $this->routes))
 		{
 			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
 		}
@@ -125,6 +125,7 @@ class ApiRouter extends Router
 				];
 			}
 		}
+
 		throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $route), 404);
 	}
 }
