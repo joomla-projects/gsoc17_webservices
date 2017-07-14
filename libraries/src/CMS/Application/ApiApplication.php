@@ -80,6 +80,7 @@ final class ApiApplication extends CMSApplication
 
 		// Mark afterApiRoute in the profiler.
 		JDEBUG ? $this->profiler->mark('afterApiRoute') : null;
+
 		// Dispatch the application
 		$this->dispatch();
 
