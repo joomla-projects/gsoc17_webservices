@@ -14,6 +14,7 @@ use Joomla\Application\Web\WebClient;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Router\ApiRouter;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Joomla! API Application class
@@ -70,6 +71,15 @@ final class ApiApplication extends CMSApplication
 	{
 		// Initialise the application
 		$this->initialiseApp();
+
+		// Mark afterInitialise in the profiler.
+		JDEBUG ? $this->profiler->mark('afterInitialise') : null;
+
+		// Route the application
+		$this->route();
+
+		// Mark afterApiRoute in the profiler.
+		JDEBUG ? $this->profiler->mark('afterApiRoute') : null;
 
 	}
 
@@ -135,11 +145,17 @@ final class ApiApplication extends CMSApplication
 	protected function route()
 	{
 		$uri = \JUri::getInstance();
-		$router = static::getRouter();
+		$router = $this->getApiRouter();
 
 		// Trigger the onBeforeApiRoute event.
 		PluginHelper::importPlugin('webservices');
 		$this->triggerEvent('onBeforeApiRoute', &$router);
+
+		$route = $router->parseRoute($uri::current());
+
+		$this->input->set('option', $route['vars']['component']);
+		$this->input->set('controller', $route['controller']);
+		$this->input->set('task', $route['task']);
 	}
 
 	/**
@@ -152,5 +168,50 @@ final class ApiApplication extends CMSApplication
 	public function getApiRouter()
 	{
 		return JFactory::getContainer()->get('ApiRouter');
+	}
+	/**
+	 * Dispatch the application
+	 *
+	 * @param   string  $component  The component which is being rendered.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function dispatch($component = null)
+	{
+		$app = \JFactory::getApplication();
+
+		// Get the component if not set.
+		if (!$component)
+		{
+			$component = $this->input->get('option', null);
+		}
+
+		if (strpos($component, 'com_') !== false)
+		{
+			$component = ucfirst(substr($component, strpos($component, '_')+1));
+		}
+
+		else
+		{
+			$component = ucfirst($component);
+		}
+
+		// Load the document to the API
+		$this->loadDocument();
+
+		// Set up the params
+		$document = \JFactory::getDocument();
+
+		// Register the document object with \JFactory
+		\JFactory::$document = $document;
+
+		$contents = ComponentHelper::renderComponent($component);
+		$document->setBuffer($contents, 'component');
+
+		// Trigger the onAfterDispatch event.
+		PluginHelper::importPlugin('system');
+		$this->triggerEvent('onAfterDispatch');
 	}
 }

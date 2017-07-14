@@ -119,7 +119,8 @@ class ApiRouter extends Router
 				$controller = preg_split("/[.]+/", $rule['controller']);
 
 				return [
-					'controller' => $controller,
+					'controller' => $controller[0],
+					'task'       => $controller[0],
 					'vars'       => $vars
 				];
 			}
