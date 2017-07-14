@@ -80,7 +80,11 @@ final class ApiApplication extends CMSApplication
 
 		// Mark afterApiRoute in the profiler.
 		JDEBUG ? $this->profiler->mark('afterApiRoute') : null;
+		// Dispatch the application
+		$this->dispatch();
 
+		// Mark afterDispatch in the profiler.
+		JDEBUG ? $this->profiler->mark('afterDispatch') : null;
 	}
 
 	/**
@@ -151,7 +155,7 @@ final class ApiApplication extends CMSApplication
 		PluginHelper::importPlugin('webservices');
 		$this->triggerEvent('onBeforeApiRoute', &$router);
 
-		$route = $router->parseRoute($uri::current());
+		$route = $router->parseRoute($uri::current(), $this->input->getMethod());
 
 		$this->input->set('option', $route['vars']['component']);
 		$this->input->set('controller', $route['controller']);
@@ -186,16 +190,6 @@ final class ApiApplication extends CMSApplication
 		if (!$component)
 		{
 			$component = $this->input->get('option', null);
-		}
-
-		if (strpos($component, 'com_') !== false)
-		{
-			$component = ucfirst(substr($component, strpos($component, '_')+1));
-		}
-
-		else
-		{
-			$component = ucfirst($component);
 		}
 
 		// Load the document to the API
