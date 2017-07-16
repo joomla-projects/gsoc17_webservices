@@ -161,6 +161,21 @@ final class ApiApplication extends CMSApplication
 		$this->input->set('option', $route['vars']['component']);
 		$this->input->set('controller', $route['controller']);
 		$this->input->set('task', $route['task']);
+
+		foreach ($route['vars'] as $key => $value)
+		{
+			if ($key != 'component')
+			{
+				if ($this->input->getMethod() == 'POST')
+				{
+					$this->input->post->set($key, $value);
+				}
+				else
+				{
+					$this->input->set($key, $value);
+				}
+			}
+		}
 	}
 
 	/**
