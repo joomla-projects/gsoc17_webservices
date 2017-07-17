@@ -8,7 +8,7 @@
 
 namespace Joomla\CMS\Application;
 
-defined('_JEXEC') or die;
+defined('JPATH_PLATFORM') or die;
 
 use Joomla\Application\Web\WebClient;
 use Joomla\CMS\Router\ApiRouter;
