@@ -164,9 +164,9 @@ final class ApiApplication extends CMSApplication
 
 		foreach ($route['vars'] as $key => $value)
 		{
-			if ($key != 'component')
+			if ($key !== 'component')
 			{
-				if ($this->input->getMethod() == 'POST')
+				if ($this->input->getMethod() === 'POST')
 				{
 					$this->input->post->set($key, $value);
 				}
