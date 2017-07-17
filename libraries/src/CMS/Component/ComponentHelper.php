@@ -358,11 +358,6 @@ class ComponentHelper
 			define('JPATH_COMPONENT_ADMINISTRATOR', JPATH_ADMINISTRATOR . '/components/' . $option);
 		}
 
-		if (!defined('JPATH_COMPONENT_API'))
-		{
-			define('JPATH_COMPONENT_API', JPATH_API . '/components/' . $option);
-		}
-
 		// If component is disabled throw error
 		if (!static::isEnabled($option))
 		{
