@@ -93,7 +93,7 @@ final class ApiApplication extends CMSApplication
 	/**
 	 * Method to send the application response to the client.  All headers will be sent prior to the main application output data.
 	 *
-	 * Temporary: Added $options param for CORS. (Disabled by default)
+	 * @param   array    $options      An optional argument to enable CORS. (Temporary)
 	 *
 	 * @return  void
 	 *
