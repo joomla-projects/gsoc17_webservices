@@ -11,9 +11,9 @@ namespace Joomla\CMS\Application;
 defined('_JEXEC') or die;
 
 use Joomla\Application\Web\WebClient;
+use Joomla\CMS\Router\ApiRouter;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Router\ApiRouter;
 
 /**
  * Joomla! API Application class
@@ -25,16 +25,16 @@ final class ApiApplication extends CMSApplication
 	/**
 	 * Class constructor.
 	 *
-	 * @param   \JInput    $input      An optional argument to provide dependency injection for the application's input
+	 * @param   \JInput   $input       An optional argument to provide dependency injection for the application's input
 	 *                                 object.  If the argument is a JInput object that object will become the
 	 *                                 application's input object, otherwise a default input object is created.
-	 * @param   Registry   $config     An optional argument to provide dependency injection for the application's config
+	 * @param   Registry  $config      An optional argument to provide dependency injection for the application's config
 	 *                                 object.  If the argument is a Registry object that object will become the
 	 *                                 application's config object, otherwise a default config object is created.
-	 * @param   WebClient  $client     An optional argument to provide dependency injection for the application's client
+	 * @param   WebClient $client      An optional argument to provide dependency injection for the application's client
 	 *                                 object.  If the argument is a WebClient object that object will become the
 	 *                                 application's client object, otherwise a default client object is created.
-	 * @param   Container  $container  Dependency injection container.
+	 * @param   Container $container   Dependency injection container.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -93,22 +93,35 @@ final class ApiApplication extends CMSApplication
 	/**
 	 * Method to send the application response to the client.  All headers will be sent prior to the main application output data.
 	 *
+	 * Temporary: Added $options param for CORS. (Disabled by default)
+	 *
 	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function respond()
+	protected function respond($options = array())
 	{
 		$this->setBody(json_encode($this->getBody()));
 
+		// Set the Joomla! API signature
+		$this->setHeader('X-Powered-By', 'JoomlaAPI/1.0', true);
+
+		if (array_key_exists('cors', $options))
+		{
+			// Enable CORS (Cross-origin resource sharing)
+			$this->setHeader('Access-Control-Allow-Origin', '*', true);
+			$this->setHeader('Access-Control-Allow-Headers', 'Authorization');
+		}
+
 		// Parent function can be overridden later on for debugging.
 		parent::respond();
+
 	}
 
 	/**
 	 * Gets the name of the current template.
 	 *
-	 * @param   boolean  $params  True to return the template parameters
+	 * @param   boolean $params True to return the template parameters
 	 *
 	 * @return  string
 	 *
@@ -134,7 +147,7 @@ final class ApiApplication extends CMSApplication
 	 */
 	protected function route()
 	{
-		$uri = \JUri::getInstance();
+		$uri    = \JUri::getInstance();
 		$router = static::getRouter();
 
 		// Trigger the onBeforeApiRoute event.
