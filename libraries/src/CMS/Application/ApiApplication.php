@@ -189,6 +189,7 @@ final class ApiApplication extends CMSApplication
 	{
 		return JFactory::getContainer()->get('ApiRouter');
 	}
+
 	/**
 	 * Dispatch the application
 	 *
