@@ -9,8 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Tobscure\JsonApi\ElementInterface;
 use Tobscure\JsonApi\Resource;
+use Tobscure\JsonApi\ElementInterface;
 
 /**
  * JDocumentApiJsonapi class, provides an easy interface to parse output in JSON-API format.
