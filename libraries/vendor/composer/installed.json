@@ -1697,5 +1697,57 @@
             "joomla",
             "router"
         ]
+    },
+    {
+        "name": "tobscure/json-api",
+        "version": "v0.4.1",
+        "version_normalized": "0.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/tobscure/json-api.git",
+            "reference": "d4ba8437977c33a5189d95d9ffa751997f13b104"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/tobscure/json-api/zipball/d4ba8437977c33a5189d95d9ffa751997f13b104",
+            "reference": "d4ba8437977c33a5189d95d9ffa751997f13b104",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.5.9 || ^7.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8 || ^5.0"
+        },
+        "time": "2017-03-05T21:16:24+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Tobscure\\JsonApi\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Toby Zerner",
+                "email": "toby.zerner@gmail.com"
+            }
+        ],
+        "description": "JSON-API responses in PHP",
+        "keywords": [
+            "api",
+            "json",
+            "jsonapi",
+            "standard"
+        ]
     }
 ]

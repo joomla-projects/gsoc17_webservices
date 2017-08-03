@@ -32,6 +32,10 @@ class ComposerStaticInit423c8facdf90155590c7b49e979f3a1e
         array (
             'Zend\\Diactoros\\' => 15,
         ),
+        'T' => 
+        array (
+            'Tobscure\\JsonApi\\' => 17,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Util\\' => 22,
@@ -80,6 +84,10 @@ class ComposerStaticInit423c8facdf90155590c7b49e979f3a1e
         'Zend\\Diactoros\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-diactoros/src',
+        ),
+        'Tobscure\\JsonApi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tobscure/json-api/src',
         ),
         'Symfony\\Polyfill\\Util\\' => 
         array (

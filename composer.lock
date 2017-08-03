@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d827e2860c16269d13f00f2cf4b20b6",
+    "content-hash": "8573b50bf26bebc5a08f531c7afc640e",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -941,7 +941,7 @@
                 "joomla",
                 "router"
             ],
-            "time": "2017-05-27 01:17:54"
+            "time": "2017-05-27T01:17:54+00:00"
         },
         {
             "name": "joomla/session",
@@ -1592,6 +1592,56 @@
             "time": "2017-05-01T14:31:55+00:00"
         },
         {
+            "name": "tobscure/json-api",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tobscure/json-api.git",
+                "reference": "d4ba8437977c33a5189d95d9ffa751997f13b104"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tobscure/json-api/zipball/d4ba8437977c33a5189d95d9ffa751997f13b104",
+                "reference": "d4ba8437977c33a5189d95d9ffa751997f13b104",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tobscure\\JsonApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toby Zerner",
+                    "email": "toby.zerner@gmail.com"
+                }
+            ],
+            "description": "JSON-API responses in PHP",
+            "keywords": [
+                "api",
+                "json",
+                "jsonapi",
+                "standard"
+            ],
+            "time": "2017-03-05T21:16:24+00:00"
+        },
+        {
             "name": "zendframework/zend-diactoros",
             "version": "1.3.10",
             "source": {
@@ -1761,12 +1811,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla-framework/mediawiki-api.git",
-                "reference": "69e892922afad053830b5df09a1e6da083536e86"
+                "reference": "9641d7339f0929e19ba8817f9852f9806b0d615b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla-framework/mediawiki-api/zipball/69e892922afad053830b5df09a1e6da083536e86",
-                "reference": "69e892922afad053830b5df09a1e6da083536e86",
+                "url": "https://api.github.com/repos/joomla-framework/mediawiki-api/zipball/9641d7339f0929e19ba8817f9852f9806b0d615b",
+                "reference": "9641d7339f0929e19ba8817f9852f9806b0d615b",
                 "shasum": ""
             },
             "require": {
@@ -1802,7 +1852,7 @@
                 "joomla",
                 "mediawiki"
             ],
-            "time": "2017-06-01T05:16:08+00:00"
+            "time": "2017-07-30T22:02:11+00:00"
         },
         {
             "name": "pear/cache_lite",
