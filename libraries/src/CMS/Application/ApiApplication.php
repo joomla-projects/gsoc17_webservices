@@ -11,6 +11,7 @@ namespace Joomla\CMS\Application;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Application\Web\WebClient;
+use Joomla\Input\Json as JInputJson;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\ApiRouter;
 use Joomla\DI\Container;
@@ -39,7 +40,7 @@ final class ApiApplication extends CMSApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function __construct(\JInput $input = null, Registry $config = null, WebClient $client = null, Container $container = null)
+	public function __construct(JInputJson $input = null, Registry $config = null, WebClient $client = null, Container $container = null)
 	{
 		// Register the application name
 		$this->name = 'japi';

@@ -38,21 +38,8 @@ class ApiRouter extends Router
 			),
 			array(
 				'method' => 'GET',
-				'pattern' => $baseName . '/new',
-				'controller' => $controller . '.add',
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'GET',
 				'pattern' => $baseName . '/:id',
 				'controller' => $controller . '.display',
-				'rules' => array('id' => '(\d+)'),
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'GET',
-				'pattern' => $baseName . '/:id/edit',
-				'controller' => $controller . '.edit',
 				'rules' => array('id' => '(\d+)'),
 				'defaults' => $defaults
 			),
