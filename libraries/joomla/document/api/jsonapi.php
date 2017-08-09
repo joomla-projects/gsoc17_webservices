@@ -26,7 +26,7 @@ class JDocumentApiJsonapi extends JDocumentJson implements JsonSerializable
 	 * @var    Document
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $document;
+	public $document;
 
 	/**
 	 * Class constructor.

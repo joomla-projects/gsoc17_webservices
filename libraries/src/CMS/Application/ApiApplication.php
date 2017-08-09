@@ -11,6 +11,7 @@ namespace Joomla\CMS\Application;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Application\Web\WebClient;
+use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Input\Json as JInputJson;
 use Joomla\CMS\Component\ComponentHelper;
@@ -118,8 +119,6 @@ final class ApiApplication extends CMSApplication
 	 */
 	protected function respond($options = array())
 	{
-		$this->setBody(json_encode($this->getBody()));
-
 		// Set the Joomla! API signature
 		$this->setHeader('X-Powered-By', 'JoomlaAPI/1.0', true);
 
@@ -266,5 +265,20 @@ final class ApiApplication extends CMSApplication
 		// Trigger the onAfterDispatch event.
 		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterDispatch');
+	}
+
+	/**
+	 * Returns the application \JMenu object.
+	 *
+	 * @param   string  $name     The name of the application/client.
+	 * @param   array   $options  An optional associative array of configuration settings.
+	 *
+	 * @return  AbstractMenu|null
+	 *
+	 * @since   3.2
+	 */
+	public function getMenu($name = null, $options = array())
+	{
+		return null;
 	}
 }
