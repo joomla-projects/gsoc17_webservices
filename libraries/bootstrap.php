@@ -43,6 +43,7 @@ JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms', false, true);
 JLoader::registerExtensionRootFolder('', JPATH_SITE);
 JLoader::registerExtensionRootFolder('Site', JPATH_SITE);
 JLoader::registerExtensionRootFolder('Administrator', JPATH_ADMINISTRATOR);
+JLoader::registerExtensionRootFolder('Api', JPATH_ROOT . DIRECTORY_SEPARATOR . 'api');
 
 // Create the Composer autoloader
 /** @var \Composer\Autoload\ClassLoader $loader */
