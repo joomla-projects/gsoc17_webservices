@@ -30,6 +30,14 @@ use Negotiation\Negotiator;
 final class ApiApplication extends CMSApplication
 {
 	/**
+	 * Maps extension types to their
+	 *
+	 * @var    array
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $formatMapper = [];
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param   \JInput    $input      An optional argument to provide dependency injection for the application's input
@@ -55,6 +63,11 @@ final class ApiApplication extends CMSApplication
 
 		// Execute the parent constructor
 		parent::__construct($input, $config, $client, $container);
+
+		$this->triggerEvent('onGetApiFormats', [$this->formatMapper]);
+
+		// This is a core supported type so force it!
+		$this->formatMapper['application/vnd.api+json'] = 'jsonapi';
 
 		// Set the root in the URI based on the application name
 		\JUri::root(null, str_ireplace('/' . $this->getName(), '', \JUri::base(true)));
@@ -200,7 +213,14 @@ final class ApiApplication extends CMSApplication
 		}
 
 		/** @var $mediaType Accept */
-		$this->input->set('format', $mediaType->getValue());
+		$format = $mediaType->getValue();
+
+		if (array_key_exists($mediaType->getValue(), $this->formatMapper))
+		{
+			$format = $this->formatMapper[$mediaType->getValue()];
+		}
+
+		$this->input->set('format', $format);
 		$this->input->set('option', $route['vars']['component']);
 		$this->input->set('controller', $route['controller']);
 		$this->input->set('task', $route['task']);

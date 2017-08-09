@@ -11,19 +11,18 @@ namespace Joomla\Component\Content\Site\View\Article;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\View\AbstractView;
-use Tobscure\JsonApi\Resource;
 
 /**
  * HTML Article View class for the Content component
  *
  * @since  1.5
  */
-class Json extends AbstractView
+class Jsonapi extends AbstractView
 {
 	/**
 	 * The active document object
 	 *
-	 * @var    \JDocumentApiJsonapi
+	 * @var    \JDocumentJsonapi
 	 * @since  3.0
 	 */
 	public $document;

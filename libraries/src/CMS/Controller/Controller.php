@@ -856,7 +856,6 @@ class Controller implements ControllerInterface
 				if ($prefix === 'api')
 				{
 					$prefix = 'site';
-					$type = 'json';
 				}
 			}
 		}

@@ -18,7 +18,7 @@ use Tobscure\JsonApi\ElementInterface;
  * @link   http://www.jsonapi.org/
  * @since  __DEPLOY VERSION__
  */
-class JDocumentApiJsonapi extends JDocumentJson implements JsonSerializable
+class JDocumentJsonapi extends JDocumentJson implements JsonSerializable
 {
 	/**
 	 * The JsonApi Document object.
@@ -41,6 +41,7 @@ class JDocumentApiJsonapi extends JDocumentJson implements JsonSerializable
 
 		// Set mime type to JSON-API
 		$this->_mime = 'application/vnd.api+json';
+		$this->_type = 'jsonapi';
 
 		if (array_key_exists('api_document', $options) && $options['api_document'] instanceof Document)
 		{
