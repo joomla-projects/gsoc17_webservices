@@ -32,11 +32,6 @@ class Factory implements FactoryInterface
 		$type  = preg_replace('/[^A-Z0-9_\.-]/i', '', $type);
 		$ntype = null;
 
-		if ($type === 'applicationvnd.apijson')
-		{
-			$type = 'apiJsonapi';
-		}
-
 		// Determine the path and class
 		$class = '\\JDocument' . ucfirst($type);
 
