@@ -64,6 +64,7 @@ final class ApiApplication extends CMSApplication
 		// Execute the parent constructor
 		parent::__construct($input, $config, $client, $container);
 
+		$this->addFormatMap('application/json', 'json');
 		$this->addFormatMap('application/vnd.api+json', 'jsonapi');
 
 		// Set the root in the URI based on the application name
