@@ -64,10 +64,7 @@ final class ApiApplication extends CMSApplication
 		// Execute the parent constructor
 		parent::__construct($input, $config, $client, $container);
 
-		$this->triggerEvent('onGetApiFormats', [$this->formatMapper]);
-
-		// This is a core supported type so force it!
-		$this->formatMapper['application/vnd.api+json'] = 'jsonapi';
+		$this->addFormatMap('application/vnd.api+json', 'jsonapi');
 
 		// Set the root in the URI based on the application name
 		\JUri::root(null, str_ireplace('/' . $this->getName(), '', \JUri::base(true)));
@@ -102,6 +99,20 @@ final class ApiApplication extends CMSApplication
 
 		// Mark afterDispatch in the profiler.
 		JDEBUG ? $this->profiler->mark('afterDispatch') : null;
+	}
+
+	/**
+	 * Adds a mapping from a content type to the format stored. Note the format type cannot be overwritten.
+	 *
+	 * @param   string  $contentHeader  The content header
+	 * @param $format
+	 */
+	public function addFormatMap($contentHeader, $format)
+	{
+		if (!array_key_exists($contentHeader, $this->formatMapper))
+		{
+			$this->formatMapper[$contentHeader] = $format;
+		}
 	}
 
 	/**
