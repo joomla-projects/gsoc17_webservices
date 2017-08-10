@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\Dispatcher;
 use Joomla\CMS\Controller\Controller;
-use Joomla\CMS\Mvc\Factory\MvcFactory;
 
 /**
  * Dispatcher class for com_content
@@ -38,25 +37,6 @@ class ContentDispatcher extends Dispatcher
 	 */
 	public function dispatch()
 	{
-		if ($this->input->get('view') === 'article' && $this->input->get('layout') === 'pagebreak')
-		{
-			if (!$this->app->getIdentity()->authorise('core.create', 'com_content'))
-			{
-				$this->app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
-
-				return;
-			}
-		}
-		elseif ($this->input->get('view') === 'articles' && $this->input->get('layout') === 'modal')
-		{
-			if (!$this->app->getIdentity()->authorise('core.create', 'com_content'))
-			{
-				$this->app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
-
-				return;
-			}
-		}
-
 		JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
 		JLoader::register('ContentHelperQuery', JPATH_SITE . '/components/com_content/helpers/query.php');
 		JLoader::register('ContentHelperAssociation', JPATH_SITE . '/components/com_content/helpers/association.php');
@@ -77,21 +57,11 @@ class ContentDispatcher extends Dispatcher
 	 */
 	public function getController($name, $client = null, $config = array())
 	{
-		// Set up the namespace
-		$namespace = rtrim($this->namespace, '\\') . '\\';
-
-		// Set up the client
-		$client = 'Site';
-
-		$controllerClass = $namespace . $client . '\\Controller\\' . ucfirst($name);
-
-		if (!class_exists($controllerClass))
+		if ($client === null || strtolower($client) === 'api')
 		{
-			throw new \InvalidArgumentException(\JText::sprintf('JLIB_APPLICATION_ERROR_INVALID_CONTROLLER_CLASS', $controllerClass));
+			$client = 'Site';
 		}
 
-		$controller = new $controllerClass($config, new MvcFactory($namespace, $this->app), $this->app, $this->input);
-
-		return $controller;
+		return parent::getController($name, $client, $config);
 	}
 }
