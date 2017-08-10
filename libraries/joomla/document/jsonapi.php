@@ -13,7 +13,7 @@ use Tobscure\JsonApi\Document;
 use Tobscure\JsonApi\ElementInterface;
 
 /**
- * JDocumentApiJsonapi class, provides an easy interface to parse output in JSON-API format.
+ * JDocumentJsonapi class, provides an easy interface to parse output in JSON-API format.
  *
  * @link   http://www.jsonapi.org/
  * @since  __DEPLOY VERSION__
