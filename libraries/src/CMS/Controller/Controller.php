@@ -728,22 +728,9 @@ class Controller implements ControllerInterface
 			$name = $this->getName();
 		}
 
-		if (empty($prefix))
+		if (empty($prefix) && $this->factory instanceof LegacyFactory)
 		{
-			// We need this ugly code to deal with non-namespaced MVC code
-			if ($this->factory instanceof LegacyFactory)
-			{
-				$prefix = $this->model_prefix;
-			}
-			else
-			{
-				$prefix = $this->app->getName();
-
-				if ($prefix === 'api')
-				{
-					$prefix = 'administrator';
-				}
-			}
+			$prefix = $this->model_prefix;
 		}
 
 		if ($model = $this->createModel($name, $prefix, $config))
