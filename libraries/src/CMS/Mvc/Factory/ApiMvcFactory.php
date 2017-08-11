@@ -8,6 +8,9 @@
 
 namespace Joomla\CMS\Mvc\Factory;
 
+use Joomla\CMS\View\AbstractView;
+use Joomla\Cms\View\Jsonapi;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -60,5 +63,23 @@ final class ApiMvcFactory extends MvcFactory
 		}
 
 		return parent::createTable($name, $prefix, $config);
+	}
+
+	/**
+	 * Method to load and return a view object.
+	 *
+	 * @param   string  $name    The name of the view.
+	 * @param   string  $prefix  Optional view prefix.
+	 * @param   string  $type    Optional type of view.
+	 * @param   array   $config  Optional configuration array for the view.
+	 *
+	 * @return  \Joomla\CMS\View\AbstractView  The view object
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \Exception
+	 */
+	public function createView($name, $prefix = '', $type = '', array $config = array())
+	{
+		return new Jsonapi($config);
 	}
 }

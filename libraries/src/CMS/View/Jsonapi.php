@@ -7,11 +7,9 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Joomla\Component\Content\Api\View\Article;
+namespace Joomla\Cms\View;
 
 defined('_JEXEC') or die;
-
-use Joomla\CMS\View\AbstractView;
 
 /**
  * HTML Article View class for the Content component
@@ -38,6 +36,17 @@ class Jsonapi extends AbstractView
 	 */
 	public function display($tpl = null)
 	{
+		/** @var \Joomla\Component\Content\Administrator\Model\Article $model */
+		$model = $this->getModel();
+		$item = $model->getItem();
+
+		if ($item->id === null)
+		{
+			throw new \RuntimeException('Item not found', 404);
+		}
+
 		$this->document->document->addLink('self', \JUri::current());
+
+		return parent::display($tpl);
 	}
 }
