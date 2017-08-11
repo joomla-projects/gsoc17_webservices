@@ -8,7 +8,6 @@
 
 namespace Joomla\CMS\Mvc\Factory;
 
-use Joomla\CMS\View\AbstractView;
 use Joomla\Cms\View\Jsonapi;
 
 defined('JPATH_PLATFORM') or die;

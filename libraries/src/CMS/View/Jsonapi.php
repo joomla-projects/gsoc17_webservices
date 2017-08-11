@@ -46,7 +46,5 @@ class Jsonapi extends AbstractView
 		}
 
 		$this->document->document->addLink('self', \JUri::current());
-
-		return parent::display($tpl);
 	}
 }
