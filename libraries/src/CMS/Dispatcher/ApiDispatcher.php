@@ -12,8 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Controller\Api;
-use Joomla\CMS\Controller\Controller;
-use Joomla\CMS\Mvc\Factory\MvcFactory;
+use Joomla\CMS\Mvc\Factory\ApiMvcFactory;
 
 /**
  * API Implementation for our dispatcher. It loads a component's administrator language files, and calls the API
@@ -140,7 +139,7 @@ final class ApiDispatcher implements DispatcherInterface
 
 		// Execute the task for this component
 		$namespace = rtrim($this->namespace, '\\') . '\\';
-		$controller = new Api($config, new MvcFactory($namespace, $this->app), $this->app, $this->input);
+		$controller = new Api($config, new ApiMvcFactory($namespace, $this->app), $this->app, $this->input);
 		$controller->execute($task);
 		$controller->redirect();
 	}

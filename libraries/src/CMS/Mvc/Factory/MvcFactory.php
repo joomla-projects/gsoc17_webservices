@@ -62,11 +62,6 @@ class MvcFactory implements MvcFactoryInterface
 	 */
 	public function createModel($name, $prefix = '', array $config = array())
 	{
-		if (empty($prefix) && $this->application->isClient('api'))
-		{
-			$prefix = 'Administrator';
-		}
-
 		// Clean the parameters
 		$name   = preg_replace('/[^A-Z0-9_]/i', '', $name);
 		$prefix = preg_replace('/[^A-Z0-9_]/i', '', $prefix);
@@ -147,6 +142,18 @@ class MvcFactory implements MvcFactoryInterface
 		}
 
 		return new $className($db);
+	}
+
+	/**
+	 * Returns the Application object for this factory
+	 *
+	 * @return CMSApplicationInterface
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**
