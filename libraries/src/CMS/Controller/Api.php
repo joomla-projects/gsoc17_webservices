@@ -10,8 +10,8 @@ namespace Joomla\CMS\Controller;
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Mvc\Factory\MvcFactoryInterface;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Base class for a Joomla API Controller
@@ -58,6 +58,7 @@ class Api extends Controller
 	 * @param   \JInput              $input    Input
 	 *
 	 * @since   __DEPLOY_VERSION__
+	 * @throws  \Exception
 	 */
 	public function __construct($config = array(), MvcFactoryInterface $factory = null, $app = null, $input = null)
 	{
@@ -100,7 +101,7 @@ class Api extends Controller
 	{
 		$id = $this->input->get('id', 0, 'int');
 
-		// Get the model.
+		/** @var \Joomla\CMS\Model\Admin $model */
 		$model = $this->getModel();
 
 		// Remove the item.
@@ -112,9 +113,6 @@ class Api extends Controller
 		{
 			$this->setMessage($model->getError(), 'error');
 		}
-
-		// Invoke the postDelete method to allow for the child class to access the model.
-		$this->postDeleteHook($model, $id);
 	}
 
 	/**
@@ -162,6 +160,7 @@ class Api extends Controller
 	 */
 	public function edit($key = null, $urlVar = null)
 	{
+		/** @var \Joomla\CMS\Model\Admin $model */
 		$model = $this->getModel();
 		$table = $model->getTable();
 		$id   = $this->input->post->get('id', array(), 'array');
@@ -221,6 +220,8 @@ class Api extends Controller
 	public function save($key = null, $urlVar = null)
 	{
 		$app   = \JFactory::getApplication();
+
+		/** @var \Joomla\CMS\Model\Admin $model */
 		$model = $this->getModel();
 		$table = $model->getTable();
 		$data  = $this->input->post->get('data', array(), 'array');
@@ -312,9 +313,6 @@ class Api extends Controller
 		$this->releaseEditId($context, $validData[$key]);
 		$app->setUserState($context . '.data', null);
 
-		// Invoke the postSave method to allow for the child class to access the model.
-		$this->postSaveHook($model, $validData);
-
 		return true;
 	}
 
@@ -351,20 +349,5 @@ class Api extends Controller
 		$user = \JFactory::getUser();
 
 		return $user->authorise('core.create', $this->option) || count($user->getAuthorisedCategories($this->option, 'core.create'));
-	}
-
-	/**
-	 * Function that allows child controller access to model data
-	 * after the data has been saved.
-	 *
-	 * @param   \JModelLegacy  $model      The data model object.
-	 * @param   array          $validData  The validated data.
-	 *
-	 * @return  void
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	protected function postSaveHook(\JModelLegacy $model, $validData = array())
-	{
 	}
 }
