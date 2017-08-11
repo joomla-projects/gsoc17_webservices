@@ -62,6 +62,11 @@ class MvcFactory implements MvcFactoryInterface
 	 */
 	public function createModel($name, $prefix = '', array $config = array())
 	{
+		if (empty($prefix) && $this->application->isClient('api'))
+		{
+			$prefix = 'Administrator';
+		}
+
 		// Clean the parameters
 		$name   = preg_replace('/[^A-Z0-9_]/i', '', $name);
 		$prefix = preg_replace('/[^A-Z0-9_]/i', '', $prefix);
