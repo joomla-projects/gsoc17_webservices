@@ -16,7 +16,7 @@ use Joomla\CMS\View\AbstractView;
 /**
  * HTML Article View class for the Content component
  *
- * @since  1.5
+ * @since  __DEPLOY_VERSION__
  */
 class Jsonapi extends AbstractView
 {
@@ -24,7 +24,7 @@ class Jsonapi extends AbstractView
 	 * The active document object
 	 *
 	 * @var    \JDocumentJsonapi
-	 * @since  3.0
+	 * @since  __DEPLOY_VERSION__
 	 */
 	public $document;
 
@@ -34,6 +34,7 @@ class Jsonapi extends AbstractView
 	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
 	 *
 	 * @return  mixed  A string if successful, otherwise an Error object.
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function display($tpl = null)
 	{

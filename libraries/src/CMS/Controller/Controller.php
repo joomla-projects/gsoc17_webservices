@@ -738,6 +738,11 @@ class Controller implements ControllerInterface
 			else
 			{
 				$prefix = $this->app->getName();
+
+				if ($prefix === 'api')
+				{
+					$prefix = 'administrator';
+				}
 			}
 		}
 

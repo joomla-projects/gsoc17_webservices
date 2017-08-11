@@ -11,6 +11,7 @@ namespace Joomla\CMS\Dispatcher;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Controller\Api;
 use Joomla\CMS\Controller\Controller;
 use Joomla\CMS\Mvc\Factory\MvcFactory;
 
@@ -116,6 +117,7 @@ final class ApiDispatcher implements DispatcherInterface
 	public function dispatch()
 	{
 		$command = $this->input->getCmd('task', 'display');
+		$task    = $command;
 
 		// Check for a controller.task command.
 		if (strpos($command, '.') !== false)
@@ -125,12 +127,6 @@ final class ApiDispatcher implements DispatcherInterface
 
 			$this->input->set('controller', $controllerName);
 			$this->input->set('task', $task);
-		}
-		else
-		{
-			// Do we have a controller?
-			$controllerName = $this->input->get('controller', 'controller');
-			$task           = $command;
 		}
 
 		// Build controller config data
@@ -143,36 +139,9 @@ final class ApiDispatcher implements DispatcherInterface
 		}
 
 		// Execute the task for this component
-		$controller = $this->getController($controllerName, $config);
+		$namespace = rtrim($this->namespace, '\\') . '\\';
+		$controller = new Api($config, new MvcFactory($namespace, $this->app), $this->app, $this->input);
 		$controller->execute($task);
 		$controller->redirect();
-	}
-
-	/**
-	 * Get a controller from the component
-	 * TODO: Run the API Controller rather than the component's administrator controller
-	 *
-	 * @param   string  $name    Controller name
-	 * @param   array   $config  Optional controller config
-	 *
-	 * @return  Controller
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function getController($name, $config = array())
-	{
-		// Set up the namespace
-		$namespace = rtrim($this->namespace, '\\') . '\\';
-
-		$controllerClass = $namespace . 'Administrator\\Controller\\' . ucfirst($name);
-
-		if (!class_exists($controllerClass))
-		{
-			throw new \InvalidArgumentException(\JText::sprintf('JLIB_APPLICATION_ERROR_INVALID_CONTROLLER_CLASS', $controllerClass));
-		}
-
-		$controller = new $controllerClass($config, new MvcFactory($namespace, $this->app), $this->app, $this->input);
-
-		return $controller;
 	}
 }
