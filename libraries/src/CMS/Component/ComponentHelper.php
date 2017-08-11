@@ -12,6 +12,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Component\Exception\MissingException;
+use Joomla\CMS\Dispatcher\ApiDispatcher;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 
@@ -384,6 +385,13 @@ class ComponentHelper
 
 			// Execute the component.
 			$contents = static::executeComponent(JPATH_COMPONENT . '/' . $file . '.php');
+		}
+		elseif ($app->isClient('api'))
+		{
+			// We're in the API App and the component doesn't have a API integration yet. So we are going to use our
+			// 'special' dispatcher that is going to pipe all it's traffic through, and do it's own rendering. We just
+			// need some mappings we'll grab fro the existing (and previously unused $params array)
+			$contents = static::dispatchComponent(new ApiDispatcher($app, $app->input));
 		}
 		else
 		{
