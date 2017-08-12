@@ -1,10 +1,9 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_content
+ * Joomla! Content Management System
  *
- * @copyright   Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Joomla\Cms\View;
@@ -12,7 +11,7 @@ namespace Joomla\Cms\View;
 defined('_JEXEC') or die;
 
 /**
- * HTML Article View class for the Content component
+ * Generic Json API View class
  *
  * @since  __DEPLOY_VERSION__
  */
@@ -36,11 +35,18 @@ class Jsonapi extends AbstractView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var \Joomla\Component\Content\Administrator\Model\Article $model */
+		/** @var \Joomla\Cms\Model\Admin $model */
 		$model = $this->getModel();
 		$item = $model->getItem();
 
-		if ($item->id === null)
+		if ($item === false)
+		{
+			throw new \RuntimeException('Item not found', 404);
+		}
+
+		$key = $model->getTable()->getKeyName();
+
+		if ($item->$key === null)
 		{
 			throw new \RuntimeException('Item not found', 404);
 		}
