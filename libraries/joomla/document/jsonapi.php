@@ -26,7 +26,7 @@ class JDocumentJsonapi extends JDocumentJson implements JsonSerializable
 	 * @var    Document
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public $document;
+	protected $document;
 
 	/**
 	 * Class constructor.
@@ -158,5 +158,22 @@ class JDocumentJsonapi extends JDocumentJson implements JsonSerializable
 	public function jsonSerialize()
 	{
 		return $this->toArray();
+	}
+
+	/**
+	 * Add a link to the output.
+	 *
+	 * @param   string  $key    The name of the link
+	 * @param   string  $value  The link
+	 *
+	 * @return  $this
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function addLink($key, $value)
+	{
+		$this->document->addLink($key, $value);
+
+		return $this;
 	}
 }

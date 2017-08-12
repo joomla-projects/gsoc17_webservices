@@ -51,6 +51,6 @@ class Jsonapi extends AbstractView
 			throw new \RuntimeException('Item not found', 404);
 		}
 
-		$this->document->document->addLink('self', \JUri::current());
+		$this->document->addLink('self', \JUri::current());
 	}
 }
