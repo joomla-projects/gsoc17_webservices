@@ -7,8 +7,11 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\CMS\Document;
+
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Factory;
 use Tobscure\JsonApi\Document;
 use Tobscure\JsonApi\ElementInterface;
 
@@ -18,7 +21,7 @@ use Tobscure\JsonApi\ElementInterface;
  * @link   http://www.jsonapi.org/
  * @since  __DEPLOY VERSION__
  */
-class JDocumentJsonapi extends JDocumentJson implements JsonSerializable
+class JsonapiDocument extends JsonDocument implements \JsonSerializable
 {
 	/**
 	 * The JsonApi Document object.
@@ -137,11 +140,13 @@ class JDocumentJsonapi extends JDocumentJson implements JsonSerializable
 	 */
 	public function render($cache = false, $params = array())
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
+
 		if ($mdate = $this->getModifiedDate())
 		{
 			$app->modifiedDate = $mdate;
 		}
+
 		$app->mimeType = $this->_mime;
 		$app->charSet  = $this->_charset;
 

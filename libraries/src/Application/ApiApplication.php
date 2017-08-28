@@ -194,8 +194,16 @@ final class ApiApplication extends CMSApplication
 		// Trigger the onBeforeApiRoute event.
 		PluginHelper::importPlugin('webservices');
 		$this->triggerEvent('onBeforeApiRoute', array(&$router));
+		$caught404 = false;
 
-		$route = $router->parseApiRoute($this->input->getMethod());
+		try
+		{
+			$route = $router->parseApiRoute($this->input->getMethod());
+		}
+		catch (\InvalidArgumentException $e)
+		{
+			$caught404 = true;
+		}
 
 		/**
 		 * Now we have an API perform content negotation to ensure we have a valid header. Assume if the route doesn't
@@ -203,7 +211,7 @@ final class ApiApplication extends CMSApplication
 		 */
 		$priorities = array('application/vnd.api+json');
 
-		if (array_key_exists('format', $route['vars']))
+		if (!$caught404 && array_key_exists('format', $route['vars']))
 		{
 			$priorities = $route['vars']['format'];
 		}
@@ -234,6 +242,12 @@ final class ApiApplication extends CMSApplication
 		}
 
 		$this->input->set('format', $format);
+
+		if ($caught404)
+		{
+			throw $e;
+		}
+
 		$this->input->set('option', $route['vars']['component']);
 		$this->input->set('controller', $route['controller']);
 		$this->input->set('task', $route['task']);
