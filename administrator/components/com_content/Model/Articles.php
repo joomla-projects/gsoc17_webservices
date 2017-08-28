@@ -156,7 +156,7 @@ class Articles extends ListModel
 				'list.select',
 				'a.id, a.title, a.alias, a.checked_out, a.checked_out_time, a.catid' .
 					', a.state, a.access, a.created, a.created_by, a.created_by_alias, a.modified, a.ordering, a.featured, a.language, a.hits' .
-					', a.publish_up, a.publish_down'
+					', a.publish_up, a.publish_down, a.introtext, a.fulltext'
 			)
 		);
 		$query->from('#__content AS a');
@@ -388,6 +388,18 @@ class Articles extends ListModel
 					unset($items[$x]);
 				}
 			}
+		}
+
+		$asset = new \Joomla\CMS\Table\Asset($this->getDbo());
+
+		foreach (array_keys($items) as $x)
+		{
+			$items[$x]->typeAlias = 'com_content.article';
+
+			$asset->loadByName('com_content.article.' . $items[$x]->id);
+
+			// Re-inject the asset id.
+			$items[$x]->asset_id = $asset->id;
 		}
 
 		return $items;
