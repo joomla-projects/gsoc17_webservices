@@ -11,6 +11,7 @@ namespace Joomla\CMS\Application;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Application\Web\WebClient;
+use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Input\Json as JInputJson;
 use Joomla\CMS\Component\ComponentHelper;
@@ -200,7 +201,7 @@ final class ApiApplication extends CMSApplication
 		{
 			$route = $router->parseApiRoute($this->input->getMethod());
 		}
-		catch (\InvalidArgumentException $e)
+		catch (RouteNotFoundException $e)
 		{
 			$caught404 = true;
 		}

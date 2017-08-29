@@ -7,6 +7,7 @@
  */
 
 namespace Joomla\CMS\Error\Renderer;
+use Joomla\CMS\Error\JsonApi\InvalidRouteExceptionhandler;
 use Tobscure\JsonApi\ErrorHandler;
 use Tobscure\JsonApi\Exception\Handler\FallbackExceptionHandler;
 use Tobscure\JsonApi\Exception\Handler\InvalidParameterExceptionHandler;
@@ -39,6 +40,7 @@ class JsonapiRenderer extends JsonRenderer
 	{
 		$errors = new ErrorHandler;
 
+		$errors->registerHandler(new InvalidRouteExceptionHandler);
 		$errors->registerHandler(new InvalidParameterExceptionHandler);
 		$errors->registerHandler(new FallbackExceptionHandler(false));
 

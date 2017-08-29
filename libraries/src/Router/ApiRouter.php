@@ -7,6 +7,7 @@
  */
 
 namespace Joomla\CMS\Router;
+use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\Router\Router;
 
 /**
@@ -146,6 +147,6 @@ class ApiRouter extends Router
 			}
 		}
 
-		throw new \InvalidArgumentException(sprintf('Unable to handle request for route `%s`.', $path), 404);
+		throw new RouteNotFoundException(sprintf('Unable to handle request for route `%s`.', $path));
 	}
 }
