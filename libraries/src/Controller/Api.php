@@ -149,6 +149,23 @@ class Api extends Controller
 	 */
 	public function displayList($cachable = false, $urlparams = array())
 	{
+		// Assemble pagination information (using recommended JsonApi pagination notation for offset strategy)
+		$paginationInfo = $this->input->get('page', [], 'array');
+		$internalPaginationMapping = [];
+
+		if (array_key_exists('offset', $paginationInfo))
+		{
+			$this->app->input->set('limitstart', $paginationInfo['offset']);
+		}
+
+		if (array_key_exists('limit', $paginationInfo))
+		{
+			$internalPaginationMapping['limit'] = $paginationInfo['limit'];
+		}
+
+		$this->app->input->set('list', $internalPaginationMapping);
+
+
 		$document = \JFactory::getDocument();
 		$viewType = $document->getType();
 		$viewName = $this->input->get('view', 'ListJsonView');
