@@ -13,12 +13,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
 use Joomla\Input\Input;
-use Joomla\CMS\MVC\Factory\MVCFactory;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Form\FormFactoryInterface;
 
 /**
  * Base class for a Joomla Dispatcher
@@ -28,7 +25,7 @@ use Joomla\CMS\Form\FormFactoryInterface;
  *
  * @since  4.0.0
  */
-abstract class Dispatcher implements DispatcherInterface
+class Dispatcher implements DispatcherInterface
 {
 	/**
 	 * The URL option for the component.
@@ -37,14 +34,6 @@ abstract class Dispatcher implements DispatcherInterface
 	 * @since  4.0.0
 	 */
 	protected $option;
-
-	/**
-	 * The extension namespace
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
-	protected $namespace;
 
 	/**
 	 * The application instance
@@ -63,29 +52,35 @@ abstract class Dispatcher implements DispatcherInterface
 	protected $input;
 
 	/**
+	 * The MVC factory
+	 *
+	 * @var  MVCFactoryFactoryInterface
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	private $mvcFactoryFactory;
+
+	/**
 	 * Constructor for Dispatcher
 	 *
-	 * @param   CMSApplication  $app    The application instance
-	 * @param   Input           $input  The input instance
+	 * @param   CMSApplication              $app                The application instance
+	 * @param   Input                       $input              The input instance
+	 * @param   MVCFactoryFactoryInterface  $mvcFactoryFactory  The MVC factory instance
 	 *
 	 * @since   4.0.0
 	 */
-	public function __construct(CMSApplication $app, Input $input = null)
+	public function __construct(CMSApplication $app, Input $input, MVCFactoryFactoryInterface $mvcFactoryFactory)
 	{
-		if (empty($this->namespace))
-		{
-			throw new \RuntimeException('Namespace can not be empty!');
-		}
-
-		$this->app   = $app;
-		$this->input = $input ?: $app->input;
+		$this->app               = $app;
+		$this->input             = $input;
+		$this->mvcFactoryFactory = $mvcFactoryFactory;
 
 		// If option is not provided, detect it from dispatcher class name, ie ContentDispatcher
 		if (empty($this->option))
 		{
 			$this->option = ComponentHelper::getComponentName(
 				$this,
-				strtolower(str_replace('Dispatcher', '', get_class($this)))
+				str_replace('com_', '', $input->get('option'))
 			);
 		}
 
@@ -192,24 +187,22 @@ abstract class Dispatcher implements DispatcherInterface
 	 */
 	public function getController(string $name, string $client = '', array $config = array()): BaseController
 	{
-		// Set up the namespace
-		$namespace = rtrim($this->namespace, '\\') . '\\';
-
 		// Set up the client
 		$client = $client ?: ucfirst($this->app->getName());
 
-		$controllerClass = $namespace . $client . '\\Controller\\' . ucfirst($name) . 'Controller';
+		// Get the controller instance
+		$controller = $this->mvcFactoryFactory->createFactory($this->app)->createController(
+			$name,
+			$client,
+			$config,
+			$this->app,
+			$this->input
+		);
 
-		if (!class_exists($controllerClass))
+		// Check if the controller could be created
+		if (!$controller)
 		{
-			throw new \InvalidArgumentException(\JText::sprintf('JLIB_APPLICATION_ERROR_INVALID_CONTROLLER_CLASS', $controllerClass));
-		}
-
-		$controller = new $controllerClass($config, new MVCFactory($namespace, $this->app), $this->app, $this->input);
-
-		if ($controller instanceof FormFactoryAwareInterface)
-		{
-			$controller->setFormFactory(Factory::getContainer()->get(FormFactoryInterface::class));
+			throw new \InvalidArgumentException(\JText::sprintf('JLIB_APPLICATION_ERROR_INVALID_CONTROLLER_CLASS', $name));
 		}
 
 		return $controller;

@@ -92,6 +92,12 @@ class PlgSystemFields extends CMSPlugin
 			// Determine the value if it is available from the data
 			$value = key_exists($field->name, $fieldsData) ? $fieldsData[$field->name] : null;
 
+			// JSON encode value for complex fields
+			if (is_array($value) && (count($value, COUNT_NORMAL) !== count($value, COUNT_RECURSIVE) || !count(array_filter(array_keys($value), 'is_numeric'))))
+			{
+				$value = json_encode($value);
+			}
+
 			// Setting the value for the field and the item
 			$model->setFieldValue($field->id, $item->id, $value);
 		}
@@ -206,6 +212,7 @@ class PlgSystemFields extends CMSPlugin
 			{
 				$data['catid'] = $data['id'];
 			}
+
 			if (is_object($data) && isset($data->id))
 			{
 				$data->catid = $data->id;

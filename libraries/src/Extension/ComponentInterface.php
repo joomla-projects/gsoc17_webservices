@@ -11,7 +11,6 @@ namespace Joomla\CMS\Extension;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 
 /**
@@ -22,28 +21,13 @@ use Joomla\CMS\Dispatcher\DispatcherInterface;
 interface ComponentInterface
 {
 	/**
-	 * Returns the dispatcher for the given application, null if none exists.
+	 * Returns the dispatcher for the given application.
 	 *
 	 * @param   CMSApplicationInterface  $application  The application
 	 *
-	 * @return  DispatcherInterface|null
+	 * @return  DispatcherInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getDispatcher(CMSApplicationInterface $application);
-
-	/**
-	 * Returns the category service. If the service is not available
-	 * null is returned.
-	 *
-	 * @param   array   $options  The options
-	 * @param   string  $section  The section
-	 *
-	 * @return  Categories|null
-	 *
-	 * @see Categories::setOptions()
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function getCategories(array $options = [], $section = '');
+	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface;
 }

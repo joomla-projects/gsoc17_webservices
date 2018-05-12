@@ -12,14 +12,22 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Categories\CategoriesServiceInterface;
+use Joomla\CMS\Categories\SectionNotFoundException;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
+use Joomla\CMS\Dispatcher\LegacyDispatcher;
+use Joomla\CMS\Fields\FieldsServiceInterface;
+use Joomla\CMS\MVC\Factory\LegacyFactory;
+use Joomla\CMS\MVC\Factory\MVCFactory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryServiceInterface;
 
 /**
  * Access to component specific services.
  *
  * @since  __DEPLOY_VERSION__
  */
-class LegacyComponent implements ComponentInterface
+class LegacyComponent implements ComponentInterface, MVCFactoryServiceInterface, CategoriesServiceInterface, FieldsServiceInterface
 {
 	/**
 	 * @var string
@@ -41,33 +49,53 @@ class LegacyComponent implements ComponentInterface
 	}
 
 	/**
-	 * Returns the dispatcher for the given application, null if none exists.
+	 * Returns the dispatcher for the given application.
 	 *
 	 * @param   CMSApplicationInterface  $application  The application
 	 *
-	 * @return  DispatcherInterface|null
+	 * @return  DispatcherInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getDispatcher(CMSApplicationInterface $application)
+	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
 	{
-		return null;
+		return new LegacyDispatcher($application);
 	}
 
 	/**
-	 * Returns the category service. If the service is not available
-	 * null is returned.
+	 * Returns an MVCFactory.
+	 *
+	 * @param   CMSApplicationInterface  $application  The application
+	 *
+	 * @return  MVCFactoryInterface
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface
+	{
+		// Will be removed when all extensions are converted to service providers
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/dispatcher.php'))
+		{
+			return new MVCFactory('\\Joomla\\Component\\' . ucfirst($this->component), $application);
+		}
+
+		return new LegacyFactory;
+	}
+
+	/**
+	 * Returns the category service.
 	 *
 	 * @param   array   $options  The options
 	 * @param   string  $section  The section
 	 *
-	 * @return  Categories|null
+	 * @return  Categories
 	 *
 	 * @see Categories::setOptions()
 	 *
-	 * @since  __DEPLOY_VERSION__
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  SectionNotFoundException
 	 */
-	public function getCategories(array $options = [], $section = '')
+	public function getCategories(array $options = [], $section = ''): Categories
 	{
 		$classname = ucfirst($this->component) . ucfirst($section) . 'Categories';
 
@@ -77,7 +105,7 @@ class LegacyComponent implements ComponentInterface
 
 			if (!is_file($path))
 			{
-				return null;
+				throw new SectionNotFoundException;
 			}
 
 			include_once $path;
@@ -85,9 +113,130 @@ class LegacyComponent implements ComponentInterface
 
 		if (!class_exists($classname))
 		{
-			return null;
+			throw new SectionNotFoundException;
 		}
 
 		return new $classname($options);
+	}
+
+	/**
+	 * Adds Count Items for Category Manager.
+	 *
+	 * @param   \stdClass[]  $items    The category objects
+	 * @param   string       $section  The section
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \Exception
+	 */
+	public function countItems(array $items, string $section)
+	{
+		$helper = $this->loadHelper();
+
+		if (!$helper || !is_callable(array($helper, 'countTagItems')))
+		{
+			return;
+		}
+
+		$helper::countItems($items, $section);
+	}
+
+	/**
+	 * Adds Count Items for Tag Manager.
+	 *
+	 * @param   \stdClass[]  $items      The content objects
+	 * @param   string       $extension  The name of the active view.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \Exception
+	 */
+	public function countTagItems(array $items, string $extension)
+	{
+		$helper = $this->loadHelper();
+
+		if (!$helper || !is_callable(array($helper, 'countTagItems')))
+		{
+			return;
+		}
+
+		$helper::countTagItems($items, $extension);
+	}
+
+	/**
+	 * Returns a valid section for articles. If it is not valid then null
+	 * is returned.
+	 *
+	 * @param   string  $section  The section to get the mapping for
+	 * @param   object  $item     The item
+	 *
+	 * @return  string|null  The new section
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function validateSection($section, $item = null)
+	{
+		$helper = $this->loadHelper();
+
+		if (!$helper || !is_callable(array($helper, 'validateSection')))
+		{
+			return $section;
+		}
+
+		return $helper::validateSection($section, $item);
+	}
+
+	/**
+	 * Returns valid contexts.
+	 *
+	 * @return  array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getContexts(): array
+	{
+		$helper = $this->loadHelper();
+
+		if (!$helper || !is_callable(array($helper, 'getContexts')))
+		{
+			return [];
+		}
+
+		return $helper::getContexts();
+	}
+
+	/**
+	 * Returns the classname of the legacy helper class. If none is found it returns false.
+	 *
+	 * @return  bool|string
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	private function loadHelper()
+	{
+		$className = ucfirst($this->component) . 'Helper';
+
+		if (class_exists($className))
+		{
+			return $className;
+		}
+
+		$file = \JPath::clean(JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/helpers/' . $this->component . '.php');
+
+		if (!file_exists($file))
+		{
+			return false;
+		}
+
+		\JLoader::register($className, $file);
+
+		if (!class_exists($className))
+		{
+			return false;
+		}
+
+		return $className;
 	}
 }
