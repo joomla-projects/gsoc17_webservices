@@ -9,6 +9,7 @@
 namespace Joomla\CMS\Router;
 use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\Router\Router;
+use Joomla\Router\Route;
 
 /**
  * Joomla! API Router class
@@ -31,40 +32,13 @@ class ApiRouter extends Router
 	public function createCRUDRoutes($baseName, $controller, $defaults = array())
 	{
 		$routes = array(
-			array(
-				'method' => 'GET',
-				'pattern' => $baseName,
-				'controller' => $controller . '.displayList',
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'GET',
-				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '.displayItem',
-				'rules' => array('id' => '(\d+)'),
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'POST',
-				'pattern' => $baseName,
-				'controller' => $controller . '.add',
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'PUT',
-				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '.edit',
-				'rules' => array('id' => '(\d+)'),
-				'defaults' => $defaults
-			),
-			array(
-				'method' => 'DELETE',
-				'pattern' => $baseName . '/:id',
-				'controller' => $controller . '.delete',
-				'rules' => array('id' => '(\d+)'),
-				'defaults' => $defaults
-			),
+			new Route(['GET'], $baseName, $controller . '.displayList', [], $defaults),
+			new Route(['GET'], $baseName . '/:id', $controller . '.displayItem', ['id' => '(\d+)'], $defaults),
+			new Route(['POST'], $baseName, $controller . '.add', [], $defaults),
+			new Route(['PUT'], $baseName . '/:id', $controller . '.edit', ['id' => '(\d+)'], $defaults),
+			new Route(['DELETE'], $baseName . '/:id', $controller . '.delete', ['id' => '(\d+)'], $defaults),
 		);
+
 		$this->addRoutes($routes);
 	}
 
@@ -82,7 +56,15 @@ class ApiRouter extends Router
 	{
 		$method = strtoupper($method);
 
-		if (!array_key_exists($method, $this->routes))
+		$invalidMethod = true;
+
+		foreach ($this->routes as $route){
+			if (in_array($method, $route->getMethods())){
+				$invalidMethod = false;
+			}
+		}
+
+		if ($invalidMethod)
 		{
 			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
 		}
@@ -124,26 +106,29 @@ class ApiRouter extends Router
 		$query = \JUri::getInstance()->getQuery(true);
 
 		// Iterate through all of the known routes looking for a match.
-		foreach ($this->routes[$method] as $rule)
+		foreach ($this->routes as $route)
 		{
-			if (preg_match($rule['regex'], ltrim($path, '/'), $matches))
+			if (in_array($method, $route->getMethods()))
 			{
-				// If we have gotten this far then we have a positive match.
-				$vars = $rule['defaults'];
-
-				foreach ($rule['vars'] as $i => $var)
+				if (preg_match($route->getRegex(), ltrim($path, '/'), $matches))
 				{
-					$vars[$var] = $matches[$i + 1];
+					// If we have gotten this far then we have a positive match.
+					$vars = $route->getDefaults();
+
+					foreach ($route->getRouteVariables() as $i => $var)
+					{
+						$vars[$var] = $matches[$i + 1];
+					}
+
+					$controller = preg_split("/[.]+/", $route->getController());
+					$vars       = array_merge($vars, $query);
+
+					return [
+						'controller' => $controller[0],
+						'task'       => $controller[1],
+						'vars'       => $vars
+					];
 				}
-
-				$controller = preg_split("/[.]+/", $rule['controller']);
-				$vars       = array_merge($vars, $query);
-
-				return [
-					'controller' => $controller[0],
-					'task'       => $controller[1],
-					'vars'       => $vars
-				];
 			}
 		}
 
