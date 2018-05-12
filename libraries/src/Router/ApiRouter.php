@@ -61,6 +61,7 @@ class ApiRouter extends Router
 		foreach ($this->routes as $route){
 			if (in_array($method, $route->getMethods())){
 				$invalidMethod = false;
+				break;
 			}
 		}
 
