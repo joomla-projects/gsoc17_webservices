@@ -13,15 +13,27 @@ use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
+/**
+ * Handler for routing errors that should give a 404
+ *
+ * @since  4.0
+ */
 class InvalidRouteExceptionHandler implements ExceptionHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function manages(Exception $e)
-    {
-        return $e instanceof RouteNotFoundException;
-    }
+	/**
+	 * If the exception handler is able to format a response for the provided exception,
+	 * then the implementation should return true.
+	 *
+	 * @param   \Exception  $e  The exception to be handled
+	 *
+	 * @return bool
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function manages(Exception $e)
+	{
+		return $e instanceof RouteNotFoundException;
+	}
 
 	/**
 	 * Handle the provided exception.
@@ -32,16 +44,18 @@ class InvalidRouteExceptionHandler implements ExceptionHandlerInterface
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-    public function handle(Exception $e)
-    {
-        $status = 404;
-        $error = ['title' => 'Resource not found'];
+	public function handle(Exception $e)
+	{
+		$status = 404;
+		$error = ['title' => 'Resource not found'];
 
-        $code = $e->getCode();
-        if ($code) {
-            $error['code'] = $code;
-        }
+		$code = $e->getCode();
 
-        return new ResponseBag($status, [$error]);
-    }
+		if ($code)
+		{
+			$error['code'] = $code;
+		}
+
+		return new ResponseBag($status, [$error]);
+	}
 }

@@ -13,6 +13,7 @@ defined('JPATH_PLATFORM') or die;
 use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Mvc\Factory\MvcFactoryInterface;
+use Joomla\CMS\Language\Text;
 
 /**
  * Base class for a Joomla API Controller
@@ -24,6 +25,14 @@ use Joomla\CMS\Mvc\Factory\MvcFactoryInterface;
  */
 class Api extends BaseController
 {
+	/**
+	 * The content type of the item.
+	 *
+	 * @var    string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $contentType;
+
 	/**
 	 * The URL option for the component.
 	 *
@@ -84,7 +93,7 @@ class Api extends BaseController
 
 			if (!preg_match('/(.*)Controller(.*)/i', get_class($this), $r))
 			{
-				throw new \Exception(\JText::_('JLIB_APPLICATION_ERROR_CONTROLLER_GET_NAME'), 500);
+				throw new \Exception(Text::_('JLIB_APPLICATION_ERROR_CONTROLLER_GET_NAME'), 500);
 			}
 
 			$this->context = str_replace('\\', '', strtolower($r[2]));
@@ -113,7 +122,14 @@ class Api extends BaseController
 		$viewName = $this->input->get('view', 'ItemJsonView');
 		$viewLayout = $this->input->get('layout', 'default', 'string');
 
-		$view = $this->getView($viewName, $viewType, '', array('base_path' => $this->basePath, 'layout' => $viewLayout));
+		try
+		{
+			$view = $this->getView($viewName, $viewType, '', ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]);
+		}
+		catch (\Exception $e)
+		{
+			return $this;
+		}
 
 		// Get/Create the model
 		if ($model = $this->getModel())
@@ -122,11 +138,20 @@ class Api extends BaseController
 			$view->setModel($model, true);
 		}
 
+		try
+		{
+			$modelName = $model->getName();
+		}
+		catch (\Exception $e)
+		{
+			return $this;
+		}
+
 		$view->document = $document;
 
-		if (empty($model->getState($model->getName() . 'id')))
+		if (empty($model->getState($modelName . 'id')))
 		{
-			$model->setState($model->getName() . 'id', $id);
+			$model->setState($modelName . 'id', $id);
 		}
 
 		$view->display();
@@ -171,10 +196,17 @@ class Api extends BaseController
 		$viewName = $this->input->get('view', 'ListJsonView');
 		$viewLayout = $this->input->get('layout', 'default', 'string');
 
-		$view = $this->getView($viewName, $viewType, '', array('base_path' => $this->basePath, 'layout' => $viewLayout));
+		try
+		{
+			$view = $this->getView($viewName, $viewType, '', ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]);
+		}
+		catch (\Exception $e)
+		{
+			return $this;
+		}
 
 		// Get/Create the model
-		if ($model = $this->getModel($viewName))
+		if ($model = $this->getModel($this->contentType))
 		{
 			// Push the model into the view (as default)
 			$view->setModel($model, true);
@@ -196,20 +228,23 @@ class Api extends BaseController
 	 */
 	public function delete()
 	{
+		if (!\JFactory::getUser()->authorise('core.delete', $this->option))
+		{
+			throw new NotAllowed('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED', 403);
+		}
+
 		$id = $this->input->get('id', 0, 'int');
 
 		/** @var \Joomla\CMS\MVC\Model\AdminModel $model */
 		$model = $this->getModel();
 
 		// Remove the item.
-		if ($model->delete($id))
-		{
-			$this->setMessage(\JText::plural($this->text_prefix . '_N_ITEMS_DELETED', count($id)));
-		}
-		else
+		if (!$model->delete($id))
 		{
 			throw new \RuntimeException($model->getError(), 500);
 		}
+
+		$this->app->setHeader('status', 204);
 	}
 
 	/**
@@ -290,7 +325,7 @@ class Api extends BaseController
 		if ($checkin && !$model->checkout($recordId))
 		{
 			// Check-out failed, display a notice but allow the user to see the record.
-			$this->setMessage(\JText::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
+			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
 
 			return false;
 		}
@@ -298,7 +333,7 @@ class Api extends BaseController
 		{
 			// Check-out succeeded, push the new record id into the session.
 			$this->holdEditId($this->context, $recordId);
-			\JFactory::getApplication()->setUserState($this->context . '.data', null);
+			$this->app->setUserState($this->context . '.data', null);
 
 			return $this->save($key, $urlVar);
 		}
@@ -316,8 +351,6 @@ class Api extends BaseController
 	 */
 	public function save($key = null, $urlVar = null)
 	{
-		$app   = \JFactory::getApplication();
-
 		/** @var \Joomla\CMS\MVC\Model\AdminModel $model */
 		$model = $this->getModel();
 		$table = $model->getTable();
@@ -374,7 +407,7 @@ class Api extends BaseController
 			}
 
 			// Save the data in the session.
-			$app->setUserState($context . '.data', $data);
+			$this->app->setUserState($context . '.data', $data);
 
 			return false;
 		}
@@ -388,9 +421,9 @@ class Api extends BaseController
 		if (!$model->save($validData))
 		{
 			// Save the data in the session.
-			$app->setUserState($context . '.data', $data);
+			$this->app->setUserState($context . '.data', $data);
 
-			$this->setMessage(\JText::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'error');
+			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'error');
 
 			return false;
 		}
@@ -398,17 +431,17 @@ class Api extends BaseController
 		if ($checkin && $model->checkin($validData[$key]) === false)
 		{
 			// Save the data in the session.
-			$app->setUserState($context . '.data', $validData);
+			$this->app->setUserState($context . '.data', $validData);
 
 			// Check-in failed, so go back to the record and display a notice.
-			$this->setMessage(\JText::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
+			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
 
 			return false;
 		}
 
 		// Clear the record id and data from the session.
 		$this->releaseEditId($context, $validData[$key]);
-		$app->setUserState($context . '.data', null);
+		$this->app->setUserState($context . '.data', null);
 
 		return true;
 	}

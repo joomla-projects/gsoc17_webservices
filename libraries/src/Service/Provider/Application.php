@@ -44,99 +44,102 @@ class Application implements ServiceProviderInterface
 	 * @since   4.0
 	 */
 	public function register(Container $container)
-        {
-                $container->alias(AdministratorApplication::class, 'JApplicationAdministrator')
-                        ->share(
-                                'JApplicationAdministrator',
-                                function (Container $container) {
-                                        $app = new AdministratorApplication(null, $container->get('config'), null, $container);
+	{
+		$container->alias(AdministratorApplication::class, 'JApplicationAdministrator')
+			->share(
+				'JApplicationAdministrator',
+				function (Container $container) {
+					$app = new AdministratorApplication(null, $container->get('config'), null, $container);
 
-                                        // The session service provider needs Factory::$application, set it if still null
-                                        if (Factory::$application === null) {
-                                                Factory::$application = $app;
-                                        }
+					// The session service provider needs Factory::$application, set it if still null
+					if (Factory::$application === null)
+					{
+						Factory::$application = $app;
+					}
 
-                                        $app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
-                                        $app->setLogger($container->get(LoggerInterface::class));
-                                        $app->setSession($container->get('Joomla\Session\SessionInterface'));
+					$app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
+					$app->setLogger($container->get(LoggerInterface::class));
+					$app->setSession($container->get('Joomla\Session\SessionInterface'));
 
-                                        return $app;
-                                },
-                                true
-                        );
+					return $app;
+				},
+				true
+			);
 
-                $container->alias(SiteApplication::class, 'JApplicationSite')
-                        ->share(
-                                'JApplicationSite',
-                                function (Container $container) {
-                                        $app = new SiteApplication(null, $container->get('config'), null, $container);
+		$container->alias(SiteApplication::class, 'JApplicationSite')
+			->share(
+				'JApplicationSite',
+				function (Container $container) {
+					$app = new SiteApplication(null, $container->get('config'), null, $container);
 
-                                        // The session service provider needs Factory::$application, set it if still null
-                                        if (Factory::$application === null) {
-                                                Factory::$application = $app;
-                                        }
+					// The session service provider needs Factory::$application, set it if still null
+					if (Factory::$application === null)
+					{
+						Factory::$application = $app;
+					}
 
-                                        $app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
-                                        $app->setLogger($container->get(LoggerInterface::class));
-                                        $app->setSession($container->get('Joomla\Session\SessionInterface'));
+					$app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
+					$app->setLogger($container->get(LoggerInterface::class));
+					$app->setSession($container->get('Joomla\Session\SessionInterface'));
 
-                                        return $app;
-                                },
-                                true
-                        );
+					return $app;
+				},
+				true
+			);
 
-                $container->alias(ConsoleApplication::class, BaseConsoleApplication::class)
-                        ->share(
-                                BaseConsoleApplication::class,
-                                function (Container $container) {
-                                        $app = new ConsoleApplication(null, $container->get('config'));
+		$container->alias(ConsoleApplication::class, BaseConsoleApplication::class)
+			->share(
+				BaseConsoleApplication::class,
+				function (Container $container) {
+					$app = new ConsoleApplication(null, $container->get('config'));
 
-                                        $dispatcher = $container->get('Joomla\Event\DispatcherInterface');
+					$dispatcher = $container->get('Joomla\Event\DispatcherInterface');
 
-                                        $session = new Session(new RuntimeStorage);
-                                        $session->setDispatcher($dispatcher);
+					$session = new Session(new RuntimeStorage);
+					$session->setDispatcher($dispatcher);
 
-                                        $app->setCommandLoader($container->get(LoaderInterface::class));
-                                        $app->setContainer($container);
-                                        $app->setDispatcher($dispatcher);
-                                        $app->setLogger($container->get(LoggerInterface::class));
-                                        $app->setSession($session);
+					$app->setCommandLoader($container->get(LoaderInterface::class));
+					$app->setContainer($container);
+					$app->setDispatcher($dispatcher);
+					$app->setLogger($container->get(LoggerInterface::class));
+					$app->setSession($session);
 
-                                        return $app;
-                                },
-                                true
-                        );
+					return $app;
+				},
+				true
+			);
 
-                $container->alias(ContainerLoader::class, LoaderInterface::class)
-                        ->share(
-                                LoaderInterface::class,
-                                function (Container $container) {
-                                        $mapping = [
-                                                'session:gc' => SessionGcCommand::class,
-                                        ];
-                                        return new ContainerLoader($container, $mapping);
-                                },
-                                true
-                        );
+		$container->alias(ContainerLoader::class, LoaderInterface::class)
+			->share(
+				LoaderInterface::class,
+				function (Container $container) {
+					$mapping = [
+						'session:gc' => SessionGcCommand::class,
+					];
+					return new ContainerLoader($container, $mapping);
+				},
+				true
+			);
 
-                $container->alias(ApiApplication::class, "JApplicationApi")
-                        ->share(
-                        'JApplicationApi',
-                        function (Container $container) {
-                                $app = new ApiApplication(null, null, null, $container);
+		$container->alias(ApiApplication::class, "JApplicationApi")
+			->share(
+			'JApplicationApi',
+			function (Container $container) {
+				$app = new ApiApplication(null, null, null, $container);
 
-                                // The session service provider needs JFactory::$application, set it if still null
-                                if (Factory::$application === null) {
-                                        Factory::$application = $app;
-                                }
+				// The session service provider needs JFactory::$application, set it if still null
+				if (Factory::$application === null)
+				{
+					Factory::$application = $app;
+				}
 
-                                $app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
-                                $app->setLogger(Log::createDelegatedLogger());
-                                $app->setSession($container->get('Joomla\Session\SessionInterface'));
+				$app->setDispatcher($container->get('Joomla\Event\DispatcherInterface'));
+				$app->setLogger(Log::createDelegatedLogger());
+				$app->setSession($container->get('Joomla\Session\SessionInterface'));
 
-                                return $app;
-                        },
-                        true
-                );
-        }
+				return $app;
+			},
+			true
+		);
+	}
 }

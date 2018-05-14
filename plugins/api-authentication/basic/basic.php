@@ -1,0 +1,116 @@
+<?php
+/**
+ * @package     Joomla.Plugin
+ * @subpackage  Authentication.joomla
+ *
+ * @copyright   Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\User\User;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Helper\AuthenticationHelper;
+use Joomla\CMS\Authentication\Authentication;
+use Joomla\Component\Users\Administrator\Model\UserModel;
+
+/**
+ * Joomla Authentication plugin
+ *
+ * @since  1.5
+ */
+class PlgApiAuthenticationBasic extends CMSPlugin
+{
+	/**
+	 * The application object
+	 *
+	 * @type   \Joomla\CMS\Application\CMSApplicationInterface
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $app;
+
+	/**
+	 * This method should handle any authentication and report back to the subject
+	 *
+	 * @param   array   $credentials  Array holding the user credentials
+	 * @param   array   $options      Array of extra options
+	 * @param   object  &$response    Authentication response object
+	 *
+	 * @return  void
+	 *
+	 * @since   1.5
+	 */
+	public function onUserAuthenticate($credentials, $options, &$response)
+	{
+		$response->type = 'Basic';
+
+		$username = $this->app->input->server->get('PHP_AUTH_USER');
+		$password = $this->app->input->server->get('PHP_AUTH_PW');
+
+		if (empty($password))
+		{
+			$response->status        = Authentication::STATUS_FAILURE;
+			$response->error_message = Text::_('JGLOBAL_AUTH_EMPTY_PASS_NOT_ALLOWED');
+
+			return;
+		}
+
+		// Get a database object
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true)
+			->select('id, password')
+			->from('#__users')
+			->where('username=' . $db->quote($username));
+
+		$db->setQuery($query);
+		$result = $db->loadObject();
+
+		if ($result)
+		{
+			$match = UserHelper::verifyPassword($password, $result->password, $result->id);
+
+			if ($match === true)
+			{
+				// Bring this in line with the rest of the system
+				$user               = User::getInstance($result->id);
+				$response->email    = $user->email;
+				$response->fullname = $user->name;
+				$response->username = $username;
+
+				if ($this->app->isClient('administrator'))
+				{
+					$response->language = $user->getParam('admin_language');
+				}
+
+				else
+				{
+					$response->language = $user->getParam('language');
+				}
+
+				$response->status        = Authentication::STATUS_SUCCESS;
+				$response->error_message = '';
+			}
+			else
+			{
+				// Invalid password
+				$response->status        = Authentication::STATUS_FAILURE;
+				$response->error_message = Text::_('JGLOBAL_AUTH_INVALID_PASS');
+			}
+		}
+		else
+		{
+			// Let's hash the entered password even if we don't have a matching user for some extra response time
+			// By doing so, we mitigate side channel user enumeration attacks
+			UserHelper::hashPassword($password);
+
+			// Invalid user
+			$response->status        = Authentication::STATUS_FAILURE;
+			$response->error_message = Text::_('JGLOBAL_AUTH_NO_USER');
+		}
+	}
+}

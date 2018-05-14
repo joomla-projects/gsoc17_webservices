@@ -19,7 +19,7 @@ use Joomla\Event\DispatcherInterface;
  *
  * @since  11.1
  */
-class Authentication extends \JObject
+class Authentication
 {
 	use DispatcherAwareTrait;
 
@@ -66,19 +66,28 @@ class Authentication extends \JObject
 	const STATUS_UNKNOWN = 32;
 
 	/**
-	 * @var    Authentication  JAuthentication instances container.
+	 * @var    Authentication[]  JAuthentication instances container.
 	 * @since  11.3
 	 */
-	protected static $instance;
+	protected static $instance = [];
+
+	/**
+	 * Plugin Type to run
+	 *
+	 * @type   string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $pluginType;
 
 	/**
 	 * Constructor
 	 *
+	 * @param   string               $pluginType  The plugin type to run authorisation and authentication on
 	 * @param   DispatcherInterface  $dispatcher  The event dispatcher we're going to use
 	 *
 	 * @since   11.1
 	 */
-	public function __construct(DispatcherInterface $dispatcher = null)
+	public function __construct(string $pluginType = 'authentication', DispatcherInterface $dispatcher = null)
 	{
 		// Set the dispatcher
 		if (!is_object($dispatcher))
@@ -87,8 +96,9 @@ class Authentication extends \JObject
 		}
 
 		$this->setDispatcher($dispatcher);
+		$this->pluginType = $pluginType;
 
-		$isLoaded = PluginHelper::importPlugin('authentication');
+		$isLoaded = PluginHelper::importPlugin($this->pluginType);
 
 		if (!$isLoaded)
 		{
@@ -100,18 +110,20 @@ class Authentication extends \JObject
 	 * Returns the global authentication object, only creating it
 	 * if it doesn't already exist.
 	 *
+	 * @param   string  $pluginType  The plugin type to run authorisation and authentication on
+	 *
 	 * @return  Authentication  The global Authentication object
 	 *
 	 * @since   11.1
 	 */
-	public static function getInstance()
+	public static function getInstance(string $pluginType = 'authentication')
 	{
-		if (empty(self::$instance))
+		if (empty(self::$instance[$pluginType]))
 		{
-			self::$instance = new static;
+			self::$instance[$pluginType] = new static($pluginType);
 		}
 
-		return self::$instance;
+		return self::$instance[$pluginType];
 	}
 
 	/**
@@ -129,7 +141,7 @@ class Authentication extends \JObject
 	public function authenticate($credentials, $options = array())
 	{
 		// Get plugins
-		$plugins = PluginHelper::getPlugin('authentication');
+		$plugins = PluginHelper::getPlugin($this->pluginType);
 
 		// Create authentication response
 		$response = new AuthenticationResponse;
@@ -146,7 +158,7 @@ class Authentication extends \JObject
 		 */
 		foreach ($plugins as $plugin)
 		{
-			$className = 'plg' . $plugin->type . $plugin->name;
+			$className = 'plg' . str_replace('-', '', $plugin->type) . $plugin->name;
 
 			if (class_exists($className))
 			{
@@ -201,12 +213,12 @@ class Authentication extends \JObject
 	 * @return  AuthenticationResponse[]  Array of authentication response objects
 	 *
 	 * @since  11.2
+	 * @throws \Exception
 	 */
-	public static function authorise($response, $options = array())
+	public function authorise($response, $options = array())
 	{
 		// Get plugins in case they haven't been imported already
 		PluginHelper::importPlugin('user');
-		PluginHelper::importPlugin('authentication');
 		$results = \JFactory::getApplication()->triggerEvent('onUserAuthorisation', array($response, $options));
 
 		return $results;

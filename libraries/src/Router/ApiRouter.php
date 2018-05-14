@@ -7,6 +7,10 @@
  */
 
 namespace Joomla\CMS\Router;
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\Router\Router;
 use Joomla\Router\Route;
@@ -18,6 +22,29 @@ use Joomla\Router\Route;
  */
 class ApiRouter extends Router
 {
+	/**
+	 * The application object
+	 *
+	 * @type   CMSApplicationInterface
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $app;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   CMSApplicationInterface  $app   The application object
+	 * @param   array                    $maps  An optional array of route maps
+	 *
+	 * @since   1.0
+	 */
+	public function __construct(CMSApplicationInterface $app, array $maps = [])
+	{
+		$this->app = $app;
+
+		parent::__construct($maps);
+	}
+
 	/**
 	 * Creates routes map for CRUD
 	 *
@@ -58,8 +85,10 @@ class ApiRouter extends Router
 
 		$invalidMethod = true;
 
-		foreach ($this->routes as $route){
-			if (in_array($method, $route->getMethods())){
+		foreach ($this->routes as $route)
+		{
+			if (in_array($method, $route->getMethods()))
+			{
 				$invalidMethod = false;
 				break;
 			}
@@ -91,7 +120,7 @@ class ApiRouter extends Router
 		// Remove the base URI path.
 		$path = substr_replace($path, '', 0, strlen($baseUri));
 
-		if (!\JFactory::getApplication()->get('sef_rewrite'))
+		if (!$this->app->get('sef_rewrite'))
 		{
 			// Transform the route
 			if ($path === 'index.php')

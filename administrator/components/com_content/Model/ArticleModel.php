@@ -170,7 +170,8 @@ class ArticleModel extends AdminModel
 	{
 		if (!empty($record->id))
 		{
-			if ($record->state != -2)
+			// We allow published items to be directly deleted in the API
+			if ($record->state != -2 && !\JFactory::getApplication()->isClient('api'))
 			{
 				return false;
 			}

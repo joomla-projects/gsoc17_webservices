@@ -164,4 +164,28 @@ interface CMSApplicationInterface extends ExtensionManagerInterface
 	 * @since   4.0.0
 	 */
 	public function loadIdentity(User $identity = null);
+
+	/**
+	 * Returns a property of the object or the default value if the property is not set.
+	 *
+	 * @param   string  $key      The name of the property.
+	 * @param   mixed   $default  The default value (optional) if none is set.
+	 *
+	 * @return  mixed   The value of the configuration.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function get($key, $default = null);
+
+	/**
+	 * Modifies a property of the object, creating it if it does not already exist.
+	 *
+	 * @param   string  $key    The name of the property.
+	 * @param   mixed   $value  The value of the property to set (optional).
+	 *
+	 * @return  mixed   Previous value of the property
+	 *
+	 * @since   1.0
+	 */
+	public function set($key, $value = null);
 }

@@ -111,6 +111,14 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 	protected $pathway = null;
 
 	/**
+	 * The authentication plugin type
+	 *
+	 * @type   string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $authenticationPluginType = 'authentication';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param   Input      $input      An optional argument to provide dependency injection for the application's input
@@ -880,14 +888,13 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 	 * @param   array  $credentials  Array('username' => string, 'password' => string)
 	 * @param   array  $options      Array('remember' => boolean)
 	 *
-	 * @return  boolean|\Exception  True on success, false if failed or silent handling is configured, or a \Exception object on authentication error.
+	 * @return  boolean
 	 *
 	 * @since   3.2
 	 */
 	public function login($credentials, $options = array())
 	{
-		// Get the global Authentication object.
-		$authenticate = Authentication::getInstance();
+		$authenticate = Authentication::getInstance($this->authenticationPluginType);
 		$response = $authenticate->authenticate($credentials, $options);
 
 		// Import the user plugin group.
@@ -899,7 +906,15 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 			 * Validate that the user should be able to login (different to being authenticated).
 			 * This permits authentication plugins blocking the user.
 			 */
-			$authorisations = $authenticate->authorise($response, $options);
+			try
+			{
+				$authorisations = $authenticate->authorise($response, $options);
+			}
+			catch (\Exception $e)
+			{
+				return false;
+			}
+
 			$denied_states = Authentication::STATUS_EXPIRED | Authentication::STATUS_DENIED;
 
 			foreach ($authorisations as $authorisation)
@@ -919,17 +934,17 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 					switch ($authorisation->status)
 					{
 						case Authentication::STATUS_EXPIRED:
-							\JFactory::getApplication()->enqueueMessage(\JText::_('JLIB_LOGIN_EXPIRED'), 'error');
+							$this->enqueueMessage(\JText::_('JLIB_LOGIN_EXPIRED'), 'error');
 
 							return false;
 
 						case Authentication::STATUS_DENIED:
-							\JFactory::getApplication()->enqueueMessage(\JText::_('JLIB_LOGIN_DENIED'), 'error');
+							$this->enqueueMessage(\JText::_('JLIB_LOGIN_DENIED'), 'error');
 
 							return false;
 
 						default:
-							\JFactory::getApplication()->enqueueMessage(\JText::_('JLIB_LOGIN_AUTHORISATION'), 'error');
+							$this->enqueueMessage(\JText::_('JLIB_LOGIN_AUTHORISATION'), 'error');
 
 							return false;
 					}
