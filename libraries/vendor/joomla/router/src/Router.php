@@ -66,7 +66,6 @@ class Router implements \Serializable
 	 */
 	public function addRoutes(array $routes)
 	{
-
 		foreach ($routes as $route)
 		{
 			if ($route instanceof Route)
