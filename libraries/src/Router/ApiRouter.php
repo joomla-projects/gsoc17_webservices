@@ -51,16 +51,19 @@ class ApiRouter extends Router
 	 * @param   string  $baseName    The base name of the component.
 	 * @param   string  $controller  The name of the controller that contains CRUD functions.
 	 * @param   array   $defaults    An array of default values that are used when the URL is matched.
+	 * @param   bool    $publicGets  Allow the public to make GET requests.
 	 *
 	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function createCRUDRoutes($baseName, $controller, $defaults = array())
+	public function createCRUDRoutes($baseName, $controller, $defaults = array(), $publicGets = false)
 	{
+		$getDefaults = array_merge(array('public' => $publicGets), $defaults);
+
 		$routes = array(
-			new Route(['GET'], $baseName, $controller . '.displayList', [], $defaults),
-			new Route(['GET'], $baseName . '/:id', $controller . '.displayItem', ['id' => '(\d+)'], $defaults),
+			new Route(['GET'], $baseName, $controller . '.displayList', [], $getDefaults),
+			new Route(['GET'], $baseName . '/:id', $controller . '.displayItem', ['id' => '(\d+)'], $getDefaults),
 			new Route(['POST'], $baseName, $controller . '.add', [], $defaults),
 			new Route(['PUT'], $baseName . '/:id', $controller . '.edit', ['id' => '(\d+)'], $defaults),
 			new Route(['DELETE'], $baseName . '/:id', $controller . '.delete', ['id' => '(\d+)'], $defaults),

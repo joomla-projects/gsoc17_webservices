@@ -11,7 +11,7 @@ namespace Joomla\Component\Content\Api\Controller;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\Controller\Api;
+use Joomla\CMS\MVC\Controller\ApiController;
 
 /**
  * The article controller
@@ -19,7 +19,7 @@ use Joomla\CMS\MVC\Controller\Api;
  * @since  __DEPLOY_VERSION__
  */
 
-class ArticleController extends Api
+class ArticleController extends ApiController
 {
 	/**
 	 * The content type of the item.

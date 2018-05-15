@@ -12,7 +12,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Mvc\Factory\MvcFactoryInterface;
+use Joomla\CMS\MVC\Factory\MvcFactoryInterface;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -23,7 +23,7 @@ use Joomla\CMS\Language\Text;
  *
  * @since  __DEPLOY_VERSION__
  */
-class Api extends BaseController
+class ApiController extends BaseController
 {
 	/**
 	 * The content type of the item.
@@ -101,19 +101,13 @@ class Api extends BaseController
 	}
 
 	/**
-	 * Typical view method for MVC based architecture
-	 *
-	 * This function is provide as a default implementation, in most cases
-	 * you will need to override it in your own controllers.
-	 *
-	 * @param   boolean  $cachable   If true, the view output will be cached
-	 * @param   array    $urlparams  An array of safe url parameters and their variable types, for valid values see {@link \JFilterInput::clean()}.
+	 * Basic display of an item view
 	 *
 	 * @return  static  A \JControllerLegacy object to support chaining.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function displayItem($cachable = false, $urlparams = array())
+	public function displayItem()
 	{
 		$id = $this->input->get('id', 0, 'int');
 
@@ -160,19 +154,13 @@ class Api extends BaseController
 	}
 
 	/**
-	 * Typical view method for MVC based architecture
-	 *
-	 * This function is provide as a default implementation, in most cases
-	 * you will need to override it in your own controllers.
-	 *
-	 * @param   boolean  $cachable   If true, the view output will be cached
-	 * @param   array    $urlparams  An array of safe url parameters and their variable types, for valid values see {@link \JFilterInput::clean()}.
+	 * Basic display of a list view
 	 *
 	 * @return  static  A \JControllerLegacy object to support chaining.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function displayList($cachable = false, $urlparams = array())
+	public function displayList()
 	{
 		// Assemble pagination information (using recommended JsonApi pagination notation for offset strategy)
 		$paginationInfo = $this->input->get('page', [], 'array');
@@ -253,7 +241,7 @@ class Api extends BaseController
 	 * @param   string  $key     The name of the primary key of the URL variable.
 	 * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
 	 *
-	 * @return  boolean  True if the record is added, false if not.
+	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -296,7 +284,18 @@ class Api extends BaseController
 	{
 		/** @var \Joomla\CMS\MVC\Model\AdminModel $model */
 		$model = $this->getModel();
-		$table = $model->getTable();
+
+		try
+		{
+			$table = $model->getTable();
+		}
+		catch (\Exception $e)
+		{
+			$this->setMessage($e->getMessage());
+
+			return false;
+		}
+
 		$id   = $this->input->post->get('id', array(), 'array');
 
 		// Determine the name of the primary key for the data.
@@ -353,7 +352,18 @@ class Api extends BaseController
 	{
 		/** @var \Joomla\CMS\MVC\Model\AdminModel $model */
 		$model = $this->getModel();
-		$table = $model->getTable();
+
+		try
+		{
+			$table = $model->getTable();
+		}
+		catch (\Exception $e)
+		{
+			$this->setMessage($e->getMessage());
+
+			return false;
+		}
+
 		$data  = $this->input->post->get('data', array(), 'array');
 		$checkin = property_exists($table, $table->getColumnAlias('checked_out'));
 		$context = "$this->option.edit.$this->context";

@@ -11,6 +11,7 @@ namespace Joomla\CMS\Application;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Application\Web\WebClient;
+use Joomla\CMS\Access\Exception\AuthenticationFailed;
 use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Input\Json as JInputJson;
@@ -241,7 +242,7 @@ final class ApiApplication extends CMSApplication
 		// If we can't find a match bail with a 406 - Not Acceptable
 		if ($mediaType === null)
 		{
-			throw new \RuntimeException('Could not match accept header', 406);
+			throw new Exception\NotAcceptable('Could not match accept header', 406);
 		}
 
 		/** @var $mediaType Accept */
@@ -280,7 +281,13 @@ final class ApiApplication extends CMSApplication
 
 		$this->triggerEvent('onAfterApiRoute', array($this));
 
-		$this->login(array('username' => ''), array('silent' => true, 'action' => 'core.login.api'));
+		if (!isset($route['vars']['public']) || $route['vars']['public'] === false)
+		{
+			if (!$this->login(array('username' => ''), array('silent' => true, 'action' => 'core.login.api')))
+			{
+				throw new AuthenticationFailed;
+			}
+		}
 	}
 
 	/**

@@ -9,20 +9,16 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\UserHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Helper\AuthenticationHelper;
 use Joomla\CMS\Authentication\Authentication;
-use Joomla\Component\Users\Administrator\Model\UserModel;
 
 /**
  * Joomla Authentication plugin
  *
- * @since  1.5
+ * @since  __DEPLOY_VERSION__
  */
 class PlgApiAuthenticationBasic extends CMSPlugin
 {
@@ -35,6 +31,14 @@ class PlgApiAuthenticationBasic extends CMSPlugin
 	protected $app;
 
 	/**
+	 * The application object
+	 *
+	 * @type   \Joomla\Database\DatabaseInterface
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $db;
+
+	/**
 	 * This method should handle any authentication and report back to the subject
 	 *
 	 * @param   array   $credentials  Array holding the user credentials
@@ -43,7 +47,7 @@ class PlgApiAuthenticationBasic extends CMSPlugin
 	 *
 	 * @return  void
 	 *
-	 * @since   1.5
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function onUserAuthenticate($credentials, $options, &$response)
 	{
@@ -61,14 +65,13 @@ class PlgApiAuthenticationBasic extends CMSPlugin
 		}
 
 		// Get a database object
-		$db    = Factory::getDbo();
-		$query = $db->getQuery(true)
-			->select('id, password')
-			->from('#__users')
-			->where('username=' . $db->quote($username));
+		$query = $this->db->getQuery(true)
+			->select($this->db->quoteName(array('id', 'password')))
+			->from($this->db->quoteName('#__users'))
+			->where($this->db->quoteName('username') . '=' . $this->db->quote($username));
 
-		$db->setQuery($query);
-		$result = $db->loadObject();
+		$this->db->setQuery($query);
+		$result = $this->db->loadObject();
 
 		if ($result)
 		{

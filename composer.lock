@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7796e35c3f9801eac4fa7b71335ce00",
+    "content-hash": "49a2ac77b1bb97e4255d78f666b16189",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -670,12 +670,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla-framework/database.git",
-                "reference": "1ac096f50fd52d1d1e8c3fae0fa4a9fc5f7416e8"
+                "reference": "7e7b179c2cf96288eaf5ab275222db31989edb65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla-framework/database/zipball/1ac096f50fd52d1d1e8c3fae0fa4a9fc5f7416e8",
-                "reference": "1ac096f50fd52d1d1e8c3fae0fa4a9fc5f7416e8",
+                "url": "https://api.github.com/repos/joomla-framework/database/zipball/7e7b179c2cf96288eaf5ab275222db31989edb65",
+                "reference": "7e7b179c2cf96288eaf5ab275222db31989edb65",
                 "shasum": ""
             },
             "require": {
@@ -721,7 +721,7 @@
                 "framework",
                 "joomla"
             ],
-            "time": "2018-05-11T12:11:11+00:00"
+            "time": "2018-05-13T23:43:31+00:00"
         },
         {
             "name": "joomla/di",
@@ -1321,12 +1321,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla-framework/session.git",
-                "reference": "7b1df36071c53e28fceb75ff8a6c5c346a120851"
+                "reference": "f7cca05d546fb12da488e42a753b703bf51c63a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla-framework/session/zipball/7b1df36071c53e28fceb75ff8a6c5c346a120851",
-                "reference": "7b1df36071c53e28fceb75ff8a6c5c346a120851",
+                "url": "https://api.github.com/repos/joomla-framework/session/zipball/f7cca05d546fb12da488e42a753b703bf51c63a7",
+                "reference": "f7cca05d546fb12da488e42a753b703bf51c63a7",
                 "shasum": ""
             },
             "require": {
@@ -1372,7 +1372,7 @@
                 "joomla",
                 "session"
             ],
-            "time": "2018-04-29T16:43:29+00:00"
+            "time": "2018-05-13T22:56:54+00:00"
         },
         {
             "name": "joomla/string",
@@ -2154,114 +2154,6 @@
                 "mbstring",
                 "polyfill",
                 "portable",
-                "shim"
-            ],
-            "time": "2018-04-26T10:06:28+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php56",
-            "version": "v1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php56.git",
-                "reference": "af98553c84912459db3f636329567809d639a8f6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php56/zipball/af98553c84912459db3f636329567809d639a8f6",
-                "reference": "af98553c84912459db3f636329567809d639a8f6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "symfony/polyfill-util": "~1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php56\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 5.6+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2018-04-26T10:06:28+00:00"
-        },
-        {
-            "name": "symfony/polyfill-util",
-            "version": "v1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-util.git",
-                "reference": "1a5ad95d9436cbff3296034fe9f8d586dce3fb3a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-util/zipball/1a5ad95d9436cbff3296034fe9f8d586dce3fb3a",
-                "reference": "1a5ad95d9436cbff3296034fe9f8d586dce3fb3a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Util\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony utilities for portability of PHP codes",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compat",
-                "compatibility",
-                "polyfill",
                 "shim"
             ],
             "time": "2018-04-26T10:06:28+00:00"
@@ -3608,12 +3500,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla-projects/joomla-browser.git",
-                "reference": "682224de3a49fff590070a708489559440083242"
+                "reference": "9020a33c3b14aadb86057eb25b61305e63a15e86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla-projects/joomla-browser/zipball/682224de3a49fff590070a708489559440083242",
-                "reference": "682224de3a49fff590070a708489559440083242",
+                "url": "https://api.github.com/repos/joomla-projects/joomla-browser/zipball/9020a33c3b14aadb86057eb25b61305e63a15e86",
+                "reference": "9020a33c3b14aadb86057eb25b61305e63a15e86",
                 "shasum": ""
             },
             "require": {
@@ -3651,7 +3543,7 @@
                 "acceptance testing",
                 "joomla"
             ],
-            "time": "2018-04-01T11:52:25+00:00"
+            "time": "2018-05-15T13:46:14+00:00"
         },
         {
             "name": "joomla-projects/robo-joomla",
@@ -3794,12 +3686,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla/test-system.git",
-                "reference": "2a51c311476bbe4f3ca2529e8af03218f114588a"
+                "reference": "472c69aad1db7fbad67b07311ced5a21336366e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla/test-system/zipball/2a51c311476bbe4f3ca2529e8af03218f114588a",
-                "reference": "2a51c311476bbe4f3ca2529e8af03218f114588a",
+                "url": "https://api.github.com/repos/joomla/test-system/zipball/472c69aad1db7fbad67b07311ced5a21336366e1",
+                "reference": "472c69aad1db7fbad67b07311ced5a21336366e1",
                 "shasum": ""
             },
             "require": {
@@ -3820,7 +3712,7 @@
                 "cms",
                 "joomla"
             ],
-            "time": "2018-04-09T05:12:47+00:00"
+            "time": "2018-05-15T13:20:55+00:00"
         },
         {
             "name": "joomla/test-unit",
@@ -3828,12 +3720,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/joomla/test-unit.git",
-                "reference": "229979d3bfb1ad352b309c3da6638d3fd5df0fa7"
+                "reference": "bd0f70d9ad26e9cd3abc49bb025dbf732e8259ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joomla/test-unit/zipball/229979d3bfb1ad352b309c3da6638d3fd5df0fa7",
-                "reference": "229979d3bfb1ad352b309c3da6638d3fd5df0fa7",
+                "url": "https://api.github.com/repos/joomla/test-unit/zipball/bd0f70d9ad26e9cd3abc49bb025dbf732e8259ed",
+                "reference": "bd0f70d9ad26e9cd3abc49bb025dbf732e8259ed",
                 "shasum": ""
             },
             "require": {
@@ -3852,7 +3744,7 @@
                 "tests",
                 "unit-tests"
             ],
-            "time": "2018-04-02T16:39:34+00:00"
+            "time": "2018-05-15T10:32:39+00:00"
         },
         {
             "name": "league/container",
