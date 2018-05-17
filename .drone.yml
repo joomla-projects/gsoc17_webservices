@@ -55,6 +55,11 @@ pipeline:
       commands:
         - bash libraries/vendor/joomla/test-system/src/drone-run.sh "$(pwd)"
 
+  api-tests:
+      image: joomlaprojects/docker-systemtests:latest
+      commands:
+        - bash libraries/vendor/joomla/test-api/drone-run.sh "$(pwd)"
+
 services:
   mysql:
     image: mysql:5.7

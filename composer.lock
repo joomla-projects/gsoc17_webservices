@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49a2ac77b1bb97e4255d78f666b16189",
+    "content-hash": "4ad95ee163f339bc07124c11d4067be7",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3531,7 +3531,7 @@
                     "email": "puneet.kala@community.joomla.org"
                 },
                 {
-                    "name": "Javier Gómez",
+                    "name": "Javier Gomez",
                     "email": "javier.gomez@community.joomla.org"
                 }
             ],
@@ -3679,6 +3679,37 @@
                 "mediawiki"
             ],
             "time": "2018-04-08T21:04:10+00:00"
+        },
+        {
+            "name": "joomla/test-api",
+            "version": "dev-4.0-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla/test-api.git",
+                "reference": "bfb1ec2e15abea481661446438019a6ca135bce4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla/test-api/zipball/bfb1ec2e15abea481661446438019a6ca135bce4",
+                "reference": "bfb1ec2e15abea481661446438019a6ca135bce4",
+                "shasum": ""
+            },
+            "require": {
+                "codeception/codeception": "~2.3",
+                "php": ">=7.0.0"
+            },
+            "type": "project",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Joomla CMS API tests",
+            "homepage": "https://github.com/joomla/joomla-cms",
+            "keywords": [
+                "cms",
+                "joomla"
+            ],
+            "time": "2018-05-17T12:02:48+00:00"
         },
         {
             "name": "joomla/test-system",
@@ -5855,7 +5886,8 @@
         "joomla-projects/joomla-browser": 20,
         "joomla-projects/robo-joomla": 20,
         "joomla/test-system": 20,
-        "joomla/test-unit": 20
+        "joomla/test-unit": 20,
+        "joomla/test-api": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

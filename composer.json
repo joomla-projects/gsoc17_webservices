@@ -94,6 +94,7 @@
         "joomla-projects/joomla-browser": "~4.0@dev",
         "joomla-projects/robo-joomla": "dev-develop",
         "joomla/test-system": "dev-4.0-dev",
-        "joomla/test-unit": "dev-4.0-dev"
+        "joomla/test-unit": "dev-4.0-dev",
+        "joomla/test-api": "dev-4.0-dev"
     }
 }
