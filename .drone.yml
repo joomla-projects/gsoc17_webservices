@@ -18,6 +18,8 @@ pipeline:
       - composer update joomla/test-unit --no-progress --no-suggest
       # needed for system testing
       - composer update joomla/test-system --no-progress --no-suggest
+      # needed for api testing
+      - composer update joomla/test-api --no-progress --no-suggest
       - composer update joomla-projects/selenium-server-standalone --no-progress --no-suggest
 
   php70-unit:
