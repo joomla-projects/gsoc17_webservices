@@ -27,6 +27,7 @@ class PlgWebservicesContent extends CMSPlugin
 	 * curl -H 'Authorization: Basic YWRtaW46MTIz' -X GET http://localhost/~george/joomla-cms/api/index.php/article/111
 	 * curl -H 'Authorization: Basic YWRtaW46MTIz' -X DELETE http://localhost/~george/joomla-cms/api/index.php/article/111
 	 * curl -H 'Authorization: Basic YWRtaW46MTIz' -X GET http://localhost/~george/joomla-cms/api/index.php/article/111
+	 * curl -H 'Authorization: Basic YWRtaW46MTIz' -X GET http://localhost/~george/joomla-cms/api/index.php/article
 	 */
 
 	/**

@@ -14,6 +14,7 @@ use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Factory\MvcFactoryInterface;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Base class for a Joomla API Controller
@@ -174,7 +175,7 @@ class ApiController extends BaseController
 
 		if (array_key_exists('offset', $paginationInfo))
 		{
-			$this->app->input->set('limitstart', $paginationInfo['offset']);
+			$this->input->set('limitstart', $paginationInfo['offset']);
 		}
 
 		if (array_key_exists('limit', $paginationInfo))
@@ -182,8 +183,7 @@ class ApiController extends BaseController
 			$internalPaginationMapping['limit'] = $paginationInfo['limit'];
 		}
 
-		$this->app->input->set('list', $internalPaginationMapping);
-
+		$this->input->set('list', $internalPaginationMapping);
 
 		$document = \JFactory::getDocument();
 		$viewType = $document->getType();
@@ -199,11 +199,24 @@ class ApiController extends BaseController
 			return $this;
 		}
 
-		// Get/Create the model
-		if ($model = $this->getModel($this->contentType))
+		/** @var ListModel $model */
+		$model = $this->getModel($this->contentType);
+
+		if (!$model)
 		{
-			// Push the model into the view (as default)
-			$view->setModel($model, true);
+			throw new \RuntimeException('Model failed to be created', 500);
+		}
+
+		// Push the model into the view (as default)
+		$view->setModel($model, true);
+
+		/**
+		 * Sanity check we don't have too much data being requested as regularly we will automatically set it back to
+		 * the last page of data
+		 */
+		if ($this->input->getInt('limitstart', 0) > $model->getTotal())
+		{
+			throw new Exception\ResourceNotFound;
 		}
 
 		$view->document = $document;

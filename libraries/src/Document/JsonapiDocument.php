@@ -181,4 +181,21 @@ class JsonapiDocument extends JsonDocument implements \JsonSerializable
 
 		return $this;
 	}
+
+	/**
+	 * Add a link to the output.
+	 *
+	 * @param   string  $key    The name of the metadata key
+	 * @param   string  $value  The value
+	 *
+	 * @return  $this
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function addMeta($key, $value)
+	{
+		$this->document->addMeta($key, $value);
+
+		return $this;
+	}
 }

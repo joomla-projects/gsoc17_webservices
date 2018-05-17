@@ -10,6 +10,8 @@ namespace Joomla\CMS\MVC\View;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Document\JsonapiDocument;
+use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Serializer\YmlSerializer;
 use Tobscure\JsonApi\Collection;
 
@@ -23,25 +25,19 @@ use Tobscure\JsonApi\Collection;
 class ListJsonView extends JsonView
 {
 	/**
+	 * The active document object (Redeclared for typehinting)
+	 *
+	 * @var    JsonapiDocument
+	 * @since  3.0
+	 */
+	public $document;
+
+	/**
 	 * The content type
 	 *
 	 * @var  string
 	 */
 	protected $type;
-
-	/**
-	 * The items object
-	 *
-	 * @var  array
-	 */
-	protected $items;
-
-	/**
-	 * The model state
-	 *
-	 * @var  \JObject
-	 */
-	protected $state;
 
 	/**
 	 * Constructor.
@@ -72,10 +68,11 @@ class ListJsonView extends JsonView
 	 */
 	public function display($tpl = null)
 	{
+		/** @var ListModel $model */
 		$model = $this->getModel();
 
-		$this->items = $model->getItems();
-		$this->state = $model->get('State');
+		$items = $model->getItems();
+		$pagination = $model->getPagination();
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -89,10 +86,44 @@ class ListJsonView extends JsonView
 		}
 
 		$serializer = new YmlSerializer($this->type, JPATH_COMPONENT . '/Serializer/' . $this->type . '.yml');
-		$element = new Collection($this->items, $serializer);
 
-		$this->document->setData($element);
-		$this->document->addLink('self', \JUri::current());
-		$this->document->render();
+		// Set up links for pagination
+		$currentUrl = \JUri::getInstance();
+		$currentPageDefaultInformation = array('offset' => $pagination->limitstart, 'limit' => $pagination->limit);
+		$currentPageQuery = $currentUrl->getVar('page', $currentPageDefaultInformation);
+		$totalPagesAvailable = ($pagination->pagesTotal * $pagination->limit);
+
+		$firstPage = clone $currentUrl;
+		$firstPageQuery = $currentPageQuery;
+		$firstPageQuery['offset'] = 0;
+		$firstPage->setVar('page', $firstPageQuery);
+
+		$nextPage = clone $currentUrl;
+		$nextPageQuery = $currentPageQuery;
+		$nextOffset = $currentPageQuery['offset'] + $pagination->limit;
+		$nextPageQuery['offset'] = ($nextOffset > ($totalPagesAvailable * $pagination->limit)) ? $totalPagesAvailable - $pagination->limit : $nextOffset;
+		$nextPage->setVar('page', $nextPageQuery);
+
+		$previousPage = clone $currentUrl;
+		$previousPageQuery = $currentPageQuery;
+		$previousOffset = $currentPageQuery['offset'] - $pagination->limit;
+		$previousPageQuery['offset'] = $previousOffset >= 0 ? $previousOffset : 0;
+		$previousPage->setVar('page', $previousPageQuery);
+
+		$lastPage = clone $currentUrl;
+		$lastPageQuery = $currentPageQuery;
+		$lastPageQuery['offset'] = $totalPagesAvailable - $pagination->limit;
+		$lastPage->setVar('page', $lastPageQuery);
+
+		// Set the data into the document and render it
+		$this->document->addMeta('total-pages', $pagination->pagesTotal)
+			->setData(new Collection($items, $serializer))
+			->addLink('self', (string) $currentUrl)
+			->addLink('first', (string) $firstPage)
+			->addLink('next', (string) $nextPage)
+			->addLink('previous', (string) $previousPage)
+			->addLink('last', (string) $lastPage);
+
+		return $this->document->render();
 	}
 }
