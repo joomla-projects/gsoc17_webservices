@@ -104,7 +104,7 @@ class ApiController extends BaseController
 	/**
 	 * Basic display of an item view
 	 *
-	 * @param  integer  $id  The primary key to display. Leave empty if you want to retrieve data from the request
+	 * @param   integer  $id  The primary key to display. Leave empty if you want to retrieve data from the request
 	 *
 	 * @return  static  A \JControllerLegacy object to support chaining.
 	 *
