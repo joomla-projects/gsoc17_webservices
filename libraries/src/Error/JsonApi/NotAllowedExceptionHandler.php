@@ -8,6 +8,8 @@
 
 namespace Joomla\CMS\Error\JsonApi;
 
+defined('JPATH_PLATFORM') or die;
+
 use Exception;
 use Joomla\CMS\Access\Exception\NotAllowed;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
