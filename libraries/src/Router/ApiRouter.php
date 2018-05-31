@@ -86,18 +86,9 @@ class ApiRouter extends Router
 	{
 		$method = strtoupper($method);
 
-		$invalidMethod = true;
+		$validMethods = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"];
 
-		foreach ($this->routes as $route)
-		{
-			if (in_array($method, $route->getMethods()))
-			{
-				$invalidMethod = false;
-				break;
-			}
-		}
-
-		if ($invalidMethod)
+		if (!in_array($method, $validMethods))
 		{
 			throw new \InvalidArgumentException(sprintf('%s is not a valid HTTP method.', $method));
 		}
