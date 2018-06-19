@@ -92,7 +92,14 @@ class ItemJsonView extends JsonView
 			throw new \RuntimeException('Content type missing');
 		}
 
-		$serializer = new YmlSerializer($this->type, JPATH_COMPONENT . '/Serializer/' . $this->type . '.yml');
+		$serializerDefinition = JPATH_COMPONENT . '/Serializer/' . $this->type . '.yml';
+
+		if (!file_exists($serializerDefinition))
+		{
+			throw new \RuntimeException('Unknown Content Type');
+		}
+
+		$serializer = new YmlSerializer($this->type, $serializerDefinition);
 		$element = new Resource($this->item, $serializer);
 
 		$this->document->setData($element);

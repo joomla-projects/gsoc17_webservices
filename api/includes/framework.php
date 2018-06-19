@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.API
  *
- * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -16,8 +16,16 @@ if (!file_exists(JPATH_CONFIGURATION . '/configuration.php')
 	|| (filesize(JPATH_CONFIGURATION . '/configuration.php') < 10)
 	|| (file_exists(JPATH_INSTALLATION . '/index.php') && (false === (new JVersion)->isInDevelopmentState())))
 {
+	if (file_exists(JPATH_INSTALLATION . '/index.php'))
 	{
-		echo 'No configuration file found.  Please ensure you have installed Joomla before using this application.';
+		header('Location: ../installation/index.php');
+
+		exit();
+	}
+	else
+	{
+		echo 'No configuration file found and no installation code available. Exiting...';
+
 		exit;
 	}
 }

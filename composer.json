@@ -82,7 +82,8 @@
         "symfony/console": "3.4.*",
         "symfony/debug": "3.4.*",
         "symfony/web-link": "3.4.*",
-        "symfony/yaml": "3.4.*"
+        "symfony/yaml": "3.4.*",
+        "jms/serializer": "^1.12"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.0",
@@ -94,6 +95,7 @@
         "joomla-projects/joomla-browser": "~4.0@dev",
         "joomla-projects/robo-joomla": "dev-develop",
         "joomla/test-system": "dev-4.0-dev",
-        "joomla/test-unit": "dev-4.0-dev"
+        "joomla/test-unit": "dev-4.0-dev",
+        "joomla/test-api": "dev-4.0-dev"
     }
 }

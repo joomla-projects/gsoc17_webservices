@@ -7,13 +7,19 @@
  */
 
 namespace Joomla\CMS\Error\Renderer;
+
+defined('JPATH_PLATFORM') or die;
+
 use Joomla\CMS\Error\JsonApi\AuthenticationFailedExceptionHandler;
 use Joomla\CMS\Error\JsonApi\InvalidRouteExceptionHandler;
 use Joomla\CMS\Error\JsonApi\NotAcceptableExceptionHandler;
 use Joomla\CMS\Error\JsonApi\NotAllowedExceptionHandler;
+use Joomla\CMS\Error\JsonApi\ResourceNotFoundExceptionHandler;
+use Joomla\CMS\Factory;
 use Tobscure\JsonApi\ErrorHandler;
 use Tobscure\JsonApi\Exception\Handler\FallbackExceptionHandler;
 use Tobscure\JsonApi\Exception\Handler\InvalidParameterExceptionHandler;
+use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
 /**
  * JSON error page renderer
@@ -41,18 +47,35 @@ class JsonapiRenderer extends JsonRenderer
 	 */
 	public function render(\Throwable $error): string
 	{
-		$errors = new ErrorHandler;
+		if ($error instanceof \Exception)
+		{
+			$errors = new ErrorHandler;
 
-		$errors->registerHandler(new InvalidRouteExceptionHandler);
-		$errors->registerHandler(new AuthenticationFailedExceptionHandler);
-		$errors->registerHandler(new NotAcceptableExceptionHandler);
-		$errors->registerHandler(new NotAllowedExceptionHandler);
-		$errors->registerHandler(new InvalidParameterExceptionHandler);
-		$errors->registerHandler(new FallbackExceptionHandler(JDEBUG));
+			$errors->registerHandler(new InvalidRouteExceptionHandler);
+			$errors->registerHandler(new AuthenticationFailedExceptionHandler);
+			$errors->registerHandler(new NotAcceptableExceptionHandler);
+			$errors->registerHandler(new NotAllowedExceptionHandler);
+			$errors->registerHandler(new InvalidParameterExceptionHandler);
+			$errors->registerHandler(new ResourceNotFoundExceptionHandler);
+			$errors->registerHandler(new FallbackExceptionHandler(JDEBUG));
 
-		$response = $errors->handle($error);
+			$response = $errors->handle($error);
+		}
+		else
+		{
+			$code = 500;
+			$error = ['code' => $code, 'title' => 'Internal server error'];
+
+			if (JDEBUG)
+			{
+				$error['detail'] = (string) $error;
+			}
+
+			$response = new ResponseBag($code, $error);
+		}
 
 		$this->getDocument()->setErrors($response->getErrors());
+		Factory::getApplication()->setHeader('status', $response->getStatus());
 
 		if (ob_get_contents())
 		{

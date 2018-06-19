@@ -363,14 +363,10 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 
 			PluginHelper::importPlugin('system');
 
-			// Trigger the onBeforeExecute event.
-			$this->triggerEvent(
+			// Trigger the onBeforeExecute event
+			$this->getDispatcher()->dispatch(
 				'onBeforeExecute',
-				[
-					'subject'    => $this,
-					'eventClass' => BeforeExecuteEvent::class,
-					'container'  => $this->getContainer()
-				]
+				new BeforeExecuteEvent('onBeforeExecute', ['subject' => $this, 'container' => $this->getContainer()])
 			);
 
 			// Mark beforeExecute in the profiler.
@@ -394,12 +390,6 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 				// Trigger the onAfterCompress event.
 				$this->triggerEvent('onAfterCompress');
 			}
-
-			// Send the application response.
-			$this->respond();
-
-			// Trigger the onAfterRespond event.
-			$this->triggerEvent('onAfterRespond');
 		}
 		catch (\Throwable $throwable)
 		{
@@ -418,6 +408,12 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 
 			ExceptionHandler::render($event->getError());
 		}
+
+		// Send the application response.
+		$this->respond();
+
+		// Trigger the onAfterRespond event.
+		$this->triggerEvent('onAfterRespond');
 	}
 
 	/**
@@ -485,7 +481,7 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 			if ($redirect)
 			{
 				// Redirect to the profile edit page
-				$this->enqueueMessage(\JText::_('JGLOBAL_PASSWORD_RESET_REQUIRED'), 'notice');
+				$this->enqueueMessage(Text::_('JGLOBAL_PASSWORD_RESET_REQUIRED'), 'notice');
 				$this->redirect(\JRoute::_('index.php?option=' . $option . '&view=' . $view . '&layout=' . $layout, false));
 			}
 		}
@@ -557,7 +553,7 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 			}
 			else
 			{
-				throw new \RuntimeException(\JText::sprintf('JLIB_APPLICATION_ERROR_APPLICATION_LOAD', $name), 500);
+				throw new \RuntimeException(Text::sprintf('JLIB_APPLICATION_ERROR_APPLICATION_LOAD', $name), 500);
 			}
 
 			static::$instances[$name]->loadIdentity(\JFactory::getUser());
@@ -953,17 +949,17 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 					switch ($authorisation->status)
 					{
 						case Authentication::STATUS_EXPIRED:
-							$this->enqueueMessage(\JText::_('JLIB_LOGIN_EXPIRED'), 'error');
+							$this->enqueueMessage(Text::_('JLIB_LOGIN_EXPIRED'), 'error');
 
 							return false;
 
 						case Authentication::STATUS_DENIED:
-							$this->enqueueMessage(\JText::_('JLIB_LOGIN_DENIED'), 'error');
+							$this->enqueueMessage(Text::_('JLIB_LOGIN_DENIED'), 'error');
 
 							return false;
 
 						default:
-							$this->enqueueMessage(\JText::_('JLIB_LOGIN_AUTHORISATION'), 'error');
+							$this->enqueueMessage(Text::_('JLIB_LOGIN_AUTHORISATION'), 'error');
 
 							return false;
 					}
@@ -1108,9 +1104,10 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 	protected function render()
 	{
 		// Setup the document options.
-		$this->docOptions['template'] = $this->get('theme');
-		$this->docOptions['file']     = $this->get('themeFile', 'index.php');
-		$this->docOptions['params']   = $this->get('themeParams');
+		$this->docOptions['template']     = $this->get('theme');
+		$this->docOptions['file']         = $this->get('themeFile', 'index.php');
+		$this->docOptions['params']       = $this->get('themeParams');
+		$this->docOptions['script_nonce'] = $this->get('script_nonce');
 
 		if ($this->get('themes.base'))
 		{
