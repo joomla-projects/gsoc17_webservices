@@ -41,6 +41,7 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\WebLink\\' => 26,
+            'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
         ),
@@ -81,6 +82,7 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
             'Joomla\\Filter\\' => 14,
             'Joomla\\Filesystem\\' => 18,
             'Joomla\\Event\\' => 13,
+            'Joomla\\Entity\\' => 14,
             'Joomla\\Database\\' => 16,
             'Joomla\\Data\\' => 12,
             'Joomla\\DI\\' => 10,
@@ -129,6 +131,10 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Symfony\\Component\\WebLink\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/web-link',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
         ),
         'Symfony\\Component\\Debug\\' => 
         array (
@@ -230,6 +236,10 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         array (
             0 => __DIR__ . '/..' . '/joomla/event/src',
         ),
+        'Joomla\\Entity\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/joomla/entities/src',
+        ),
         'Joomla\\Database\\' => 
         array (
             0 => __DIR__ . '/..' . '/joomla/database/src',
@@ -296,6 +306,10 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         ),
     );
 
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
+    );
+
     public static $prefixesPsr0 = array (
         'P' => 
         array (
@@ -336,6 +350,11 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
     );
 
     public static $classMap = array (
+        'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
+        'Carbon\\CarbonInterval' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterval.php',
+        'Carbon\\CarbonPeriod' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonPeriod.php',
+        'Carbon\\Exceptions\\InvalidDateException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/InvalidDateException.php',
+        'Carbon\\Translator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Translator.php',
         'Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'Defuse\\Crypto\\Core' => __DIR__ . '/..' . '/defuse/php-encryption/src/Core.php',
         'Defuse\\Crypto\\Crypto' => __DIR__ . '/..' . '/defuse/php-encryption/src/Crypto.php',
@@ -597,15 +616,12 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Joomla\\CMS\\Cache\\Exception\\CacheConnectingException' => __DIR__ . '/../../..' . '/libraries/src/Cache/Exception/CacheConnectingException.php',
         'Joomla\\CMS\\Cache\\Exception\\CacheExceptionInterface' => __DIR__ . '/../../..' . '/libraries/src/Cache/Exception/CacheExceptionInterface.php',
         'Joomla\\CMS\\Cache\\Exception\\UnsupportedCacheException' => __DIR__ . '/../../..' . '/libraries/src/Cache/Exception/UnsupportedCacheException.php',
-        'Joomla\\CMS\\Cache\\Storage\\ApcStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/ApcStorage.php',
         'Joomla\\CMS\\Cache\\Storage\\ApcuStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/ApcuStorage.php',
         'Joomla\\CMS\\Cache\\Storage\\CacheStorageHelper' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/CacheStorageHelper.php',
         'Joomla\\CMS\\Cache\\Storage\\FileStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/FileStorage.php',
-        'Joomla\\CMS\\Cache\\Storage\\MemcacheStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/MemcacheStorage.php',
         'Joomla\\CMS\\Cache\\Storage\\MemcachedStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/MemcachedStorage.php',
         'Joomla\\CMS\\Cache\\Storage\\RedisStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/RedisStorage.php',
         'Joomla\\CMS\\Cache\\Storage\\WincacheStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/WincacheStorage.php',
-        'Joomla\\CMS\\Cache\\Storage\\XcacheStorage' => __DIR__ . '/../../..' . '/libraries/src/Cache/Storage/XcacheStorage.php',
         'Joomla\\CMS\\Captcha\\Captcha' => __DIR__ . '/../../..' . '/libraries/src/Captcha/Captcha.php',
         'Joomla\\CMS\\Captcha\\Google\\HttpBridgePostRequestMethod' => __DIR__ . '/../../..' . '/libraries/src/Captcha/Google/HttpBridgePostRequestMethod.php',
         'Joomla\\CMS\\Categories\\Categories' => __DIR__ . '/../../..' . '/libraries/src/Categories/Categories.php',
@@ -1172,6 +1188,22 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Joomla\\Database\\Sqlsrv\\SqlsrvStatement' => __DIR__ . '/..' . '/joomla/database/src/Sqlsrv/SqlsrvStatement.php',
         'Joomla\\Database\\StatementInterface' => __DIR__ . '/..' . '/joomla/database/src/StatementInterface.php',
         'Joomla\\Database\\UTF8MB4SupportInterface' => __DIR__ . '/..' . '/joomla/database/src/UTF8MB4SupportInterface.php',
+        'Joomla\\Entity\\Exceptions\\AttributeNotFoundException' => __DIR__ . '/..' . '/joomla/entities/src/Exceptions/AttributeNotFoundException.php',
+        'Joomla\\Entity\\Exceptions\\JsonEncodingException' => __DIR__ . '/..' . '/joomla/entities/src/Exceptions/JsonEncodingException.php',
+        'Joomla\\Entity\\Exceptions\\RelationNotFoundException' => __DIR__ . '/..' . '/joomla/entities/src/Exceptions/RelationNotFoundException.php',
+        'Joomla\\Entity\\Helpers\\ArrayHelper' => __DIR__ . '/..' . '/joomla/entities/src/Helpers/ArrayHelper.php',
+        'Joomla\\Entity\\Helpers\\Collection' => __DIR__ . '/..' . '/joomla/entities/src/Helpers/Collection.php',
+        'Joomla\\Entity\\Helpers\\StringHelper' => __DIR__ . '/..' . '/joomla/entities/src/Helpers/StringHelper.php',
+        'Joomla\\Entity\\Model' => __DIR__ . '/..' . '/joomla/entities/src/Model.php',
+        'Joomla\\Entity\\ModelHelpers\\Attributes' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Attributes.php',
+        'Joomla\\Entity\\ModelHelpers\\Relations' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Relations.php',
+        'Joomla\\Entity\\ModelHelpers\\Serialization' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Serialization.php',
+        'Joomla\\Entity\\ModelHelpers\\Timestamps' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Timestamps.php',
+        'Joomla\\Entity\\Query' => __DIR__ . '/..' . '/joomla/entities/src/Query.php',
+        'Joomla\\Entity\\Relations\\HasMany' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasMany.php',
+        'Joomla\\Entity\\Relations\\HasOne' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasOne.php',
+        'Joomla\\Entity\\Relations\\HasOneOrMany' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasOneOrMany.php',
+        'Joomla\\Entity\\Relations\\Relation' => __DIR__ . '/..' . '/joomla/entities/src/Relations/Relation.php',
         'Joomla\\Event\\AbstractEvent' => __DIR__ . '/..' . '/joomla/event/src/AbstractEvent.php',
         'Joomla\\Event\\DelegatingDispatcher' => __DIR__ . '/..' . '/joomla/event/src/DelegatingDispatcher.php',
         'Joomla\\Event\\Dispatcher' => __DIR__ . '/..' . '/joomla/event/src/Dispatcher.php',
@@ -1267,6 +1299,7 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Joomla\\Uri\\UriImmutable' => __DIR__ . '/..' . '/joomla/uri/src/UriImmutable.php',
         'Joomla\\Uri\\UriInterface' => __DIR__ . '/..' . '/joomla/uri/src/UriInterface.php',
         'Joomla\\Utilities\\ArrayHelper' => __DIR__ . '/..' . '/joomla/utilities/src/ArrayHelper.php',
+        'JsonSerializable' => __DIR__ . '/..' . '/nesbot/carbon/src/JsonSerializable.php',
         'Metadata\\AdvancedMetadataFactoryInterface' => __DIR__ . '/..' . '/jms/metadata/src/Metadata/AdvancedMetadataFactoryInterface.php',
         'Metadata\\Cache\\CacheInterface' => __DIR__ . '/..' . '/jms/metadata/src/Metadata/Cache/CacheInterface.php',
         'Metadata\\Cache\\DoctrineCacheAdapter' => __DIR__ . '/..' . '/jms/metadata/src/Metadata/Cache/DoctrineCacheAdapter.php',
@@ -1365,8 +1398,6 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Psr\\Log\\LoggerInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerInterface.php',
         'Psr\\Log\\LoggerTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerTrait.php',
         'Psr\\Log\\NullLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/NullLogger.php',
-        'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
-        'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
         'ReCaptcha\\ReCaptcha' => __DIR__ . '/..' . '/google/recaptcha/src/ReCaptcha/ReCaptcha.php',
         'ReCaptcha\\RequestMethod' => __DIR__ . '/..' . '/google/recaptcha/src/ReCaptcha/RequestMethod.php',
         'ReCaptcha\\RequestMethod\\Curl' => __DIR__ . '/..' . '/google/recaptcha/src/ReCaptcha/RequestMethod/Curl.php',
@@ -1471,6 +1502,72 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Symfony\\Component\\Debug\\FatalErrorHandler\\FatalErrorHandlerInterface' => __DIR__ . '/..' . '/symfony/debug/FatalErrorHandler/FatalErrorHandlerInterface.php',
         'Symfony\\Component\\Debug\\FatalErrorHandler\\UndefinedFunctionFatalErrorHandler' => __DIR__ . '/..' . '/symfony/debug/FatalErrorHandler/UndefinedFunctionFatalErrorHandler.php',
         'Symfony\\Component\\Debug\\FatalErrorHandler\\UndefinedMethodFatalErrorHandler' => __DIR__ . '/..' . '/symfony/debug/FatalErrorHandler/UndefinedMethodFatalErrorHandler.php',
+        'Symfony\\Component\\Translation\\Catalogue\\AbstractOperation' => __DIR__ . '/..' . '/symfony/translation/Catalogue/AbstractOperation.php',
+        'Symfony\\Component\\Translation\\Catalogue\\MergeOperation' => __DIR__ . '/..' . '/symfony/translation/Catalogue/MergeOperation.php',
+        'Symfony\\Component\\Translation\\Catalogue\\OperationInterface' => __DIR__ . '/..' . '/symfony/translation/Catalogue/OperationInterface.php',
+        'Symfony\\Component\\Translation\\Catalogue\\TargetOperation' => __DIR__ . '/..' . '/symfony/translation/Catalogue/TargetOperation.php',
+        'Symfony\\Component\\Translation\\Command\\XliffLintCommand' => __DIR__ . '/..' . '/symfony/translation/Command/XliffLintCommand.php',
+        'Symfony\\Component\\Translation\\DataCollectorTranslator' => __DIR__ . '/..' . '/symfony/translation/DataCollectorTranslator.php',
+        'Symfony\\Component\\Translation\\DataCollector\\TranslationDataCollector' => __DIR__ . '/..' . '/symfony/translation/DataCollector/TranslationDataCollector.php',
+        'Symfony\\Component\\Translation\\DependencyInjection\\TranslationDumperPass' => __DIR__ . '/..' . '/symfony/translation/DependencyInjection/TranslationDumperPass.php',
+        'Symfony\\Component\\Translation\\DependencyInjection\\TranslationExtractorPass' => __DIR__ . '/..' . '/symfony/translation/DependencyInjection/TranslationExtractorPass.php',
+        'Symfony\\Component\\Translation\\DependencyInjection\\TranslatorPass' => __DIR__ . '/..' . '/symfony/translation/DependencyInjection/TranslatorPass.php',
+        'Symfony\\Component\\Translation\\Dumper\\CsvFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/CsvFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\DumperInterface' => __DIR__ . '/..' . '/symfony/translation/Dumper/DumperInterface.php',
+        'Symfony\\Component\\Translation\\Dumper\\FileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/FileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\IcuResFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/IcuResFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\IniFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/IniFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\JsonFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/JsonFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\MoFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/MoFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\PhpFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/PhpFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\PoFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/PoFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\QtFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/QtFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\XliffFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/XliffFileDumper.php',
+        'Symfony\\Component\\Translation\\Dumper\\YamlFileDumper' => __DIR__ . '/..' . '/symfony/translation/Dumper/YamlFileDumper.php',
+        'Symfony\\Component\\Translation\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/translation/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\Translation\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/translation/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\Translation\\Exception\\InvalidResourceException' => __DIR__ . '/..' . '/symfony/translation/Exception/InvalidResourceException.php',
+        'Symfony\\Component\\Translation\\Exception\\LogicException' => __DIR__ . '/..' . '/symfony/translation/Exception/LogicException.php',
+        'Symfony\\Component\\Translation\\Exception\\NotFoundResourceException' => __DIR__ . '/..' . '/symfony/translation/Exception/NotFoundResourceException.php',
+        'Symfony\\Component\\Translation\\Exception\\RuntimeException' => __DIR__ . '/..' . '/symfony/translation/Exception/RuntimeException.php',
+        'Symfony\\Component\\Translation\\Extractor\\AbstractFileExtractor' => __DIR__ . '/..' . '/symfony/translation/Extractor/AbstractFileExtractor.php',
+        'Symfony\\Component\\Translation\\Extractor\\ChainExtractor' => __DIR__ . '/..' . '/symfony/translation/Extractor/ChainExtractor.php',
+        'Symfony\\Component\\Translation\\Extractor\\ExtractorInterface' => __DIR__ . '/..' . '/symfony/translation/Extractor/ExtractorInterface.php',
+        'Symfony\\Component\\Translation\\Extractor\\PhpExtractor' => __DIR__ . '/..' . '/symfony/translation/Extractor/PhpExtractor.php',
+        'Symfony\\Component\\Translation\\Extractor\\PhpStringTokenParser' => __DIR__ . '/..' . '/symfony/translation/Extractor/PhpStringTokenParser.php',
+        'Symfony\\Component\\Translation\\Formatter\\ChoiceMessageFormatterInterface' => __DIR__ . '/..' . '/symfony/translation/Formatter/ChoiceMessageFormatterInterface.php',
+        'Symfony\\Component\\Translation\\Formatter\\MessageFormatter' => __DIR__ . '/..' . '/symfony/translation/Formatter/MessageFormatter.php',
+        'Symfony\\Component\\Translation\\Formatter\\MessageFormatterInterface' => __DIR__ . '/..' . '/symfony/translation/Formatter/MessageFormatterInterface.php',
+        'Symfony\\Component\\Translation\\IdentityTranslator' => __DIR__ . '/..' . '/symfony/translation/IdentityTranslator.php',
+        'Symfony\\Component\\Translation\\Interval' => __DIR__ . '/..' . '/symfony/translation/Interval.php',
+        'Symfony\\Component\\Translation\\Loader\\ArrayLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/ArrayLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\CsvFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/CsvFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\FileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/FileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\IcuDatFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/IcuDatFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\IcuResFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/IcuResFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\IniFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/IniFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\JsonFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/JsonFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\LoaderInterface' => __DIR__ . '/..' . '/symfony/translation/Loader/LoaderInterface.php',
+        'Symfony\\Component\\Translation\\Loader\\MoFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/MoFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\PhpFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/PhpFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\PoFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/PoFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\QtFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/QtFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\XliffFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/XliffFileLoader.php',
+        'Symfony\\Component\\Translation\\Loader\\YamlFileLoader' => __DIR__ . '/..' . '/symfony/translation/Loader/YamlFileLoader.php',
+        'Symfony\\Component\\Translation\\LoggingTranslator' => __DIR__ . '/..' . '/symfony/translation/LoggingTranslator.php',
+        'Symfony\\Component\\Translation\\MessageCatalogue' => __DIR__ . '/..' . '/symfony/translation/MessageCatalogue.php',
+        'Symfony\\Component\\Translation\\MessageCatalogueInterface' => __DIR__ . '/..' . '/symfony/translation/MessageCatalogueInterface.php',
+        'Symfony\\Component\\Translation\\MessageSelector' => __DIR__ . '/..' . '/symfony/translation/MessageSelector.php',
+        'Symfony\\Component\\Translation\\MetadataAwareInterface' => __DIR__ . '/..' . '/symfony/translation/MetadataAwareInterface.php',
+        'Symfony\\Component\\Translation\\PluralizationRules' => __DIR__ . '/..' . '/symfony/translation/PluralizationRules.php',
+        'Symfony\\Component\\Translation\\Reader\\TranslationReader' => __DIR__ . '/..' . '/symfony/translation/Reader/TranslationReader.php',
+        'Symfony\\Component\\Translation\\Reader\\TranslationReaderInterface' => __DIR__ . '/..' . '/symfony/translation/Reader/TranslationReaderInterface.php',
+        'Symfony\\Component\\Translation\\Translator' => __DIR__ . '/..' . '/symfony/translation/Translator.php',
+        'Symfony\\Component\\Translation\\TranslatorBagInterface' => __DIR__ . '/..' . '/symfony/translation/TranslatorBagInterface.php',
+        'Symfony\\Component\\Translation\\TranslatorInterface' => __DIR__ . '/..' . '/symfony/translation/TranslatorInterface.php',
+        'Symfony\\Component\\Translation\\Util\\ArrayConverter' => __DIR__ . '/..' . '/symfony/translation/Util/ArrayConverter.php',
+        'Symfony\\Component\\Translation\\Writer\\TranslationWriter' => __DIR__ . '/..' . '/symfony/translation/Writer/TranslationWriter.php',
+        'Symfony\\Component\\Translation\\Writer\\TranslationWriterInterface' => __DIR__ . '/..' . '/symfony/translation/Writer/TranslationWriterInterface.php',
         'Symfony\\Component\\WebLink\\EventListener\\AddLinkHeaderListener' => __DIR__ . '/..' . '/symfony/web-link/EventListener/AddLinkHeaderListener.php',
         'Symfony\\Component\\WebLink\\HttpHeaderSerializer' => __DIR__ . '/..' . '/symfony/web-link/HttpHeaderSerializer.php',
         'Symfony\\Component\\Yaml\\Command\\LintCommand' => __DIR__ . '/..' . '/symfony/yaml/Command/LintCommand.php',
@@ -1542,6 +1639,7 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitb3f90d0e0764a1ad25163726533579c0::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitb3f90d0e0764a1ad25163726533579c0::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInitb3f90d0e0764a1ad25163726533579c0::$fallbackDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitb3f90d0e0764a1ad25163726533579c0::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitb3f90d0e0764a1ad25163726533579c0::$classMap;
 
