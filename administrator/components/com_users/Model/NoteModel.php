@@ -31,8 +31,20 @@ class NoteModel extends AdminModel
 	 */
 	public $typeAlias = 'com_users.note';
 
+	/**
+	 * @var NoteTable
+	 */
 	protected $entity;
 
+	/**
+	 * NoteModel constructor.
+	 *
+	 * @param   array                 $config       An array of configuration options (name, state, dbo, table_path, ignore_request).
+	 * @param   MVCFactoryInterface   $factory      The factory.
+	 * @param   FormFactoryInterface  $formFactory  The form factory.
+	 *
+	 * @throws \Exception
+	 */
 	public function __construct(array $config = array(), MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
 	{
 		parent::__construct($config, $factory, $formFactory);
@@ -112,6 +124,7 @@ class NoteModel extends AdminModel
 		if (empty($data))
 		{
 			$data = $this->getItem($this->getState($this->getName() . '.id'));
+
 			// Prime some default values.
 			if ($this->getState('note.id') == 0)
 			{

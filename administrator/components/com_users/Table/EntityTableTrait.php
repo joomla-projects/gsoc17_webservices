@@ -9,6 +9,8 @@
 
 namespace Joomla\Component\Users\Administrator\Table;
 
+use Joomla\Database\DatabaseDriver;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -18,7 +20,45 @@ defined('JPATH_PLATFORM') or die;
  */
 trait EntityTableTrait
 {
+	/**
+	 * @var mixed
+	 */
 	protected $type_alias;
+
+	/**
+	 * @var array
+	 */
+	public $newTags;
+
+	/**
+	 * The cache of the columns attributes for each table.
+	 *
+	 * @var array
+	 */
+	public static $fieldsCache = [];
+
+	/**
+	 * Constructor
+	 *
+	 * @param   DatabaseDriver  $db         Database object
+	 * @param   boolean         $loadFields true if model is preloaded with table columns (null values)
+	 *
+	 * @since  2.5
+	 */
+	public function __construct(DatabaseDriver $db, $loadFields = false)
+	{
+		// TODO hack: Initialise the table properties. Needed for loading data from forms.
+		if ($loadFields)
+		{
+			$fields = $this->getFields($db);
+			parent::__construct($db, $fields);
+		}
+		else
+		{
+			parent::__construct($db);
+		}
+
+	}
 
 	/**
 	 * @return mixed
@@ -29,20 +69,29 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param mixed $type_alias
+	 * @param   mixed $type_alias type alias
+	 * @return void
 	 */
 	public function setTypeAlias($type_alias)
 	{
 		$this->type_alias = $type_alias;
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function getKeyName()
 	{
 		return $this->getPrimaryKey();
 	}
 
-	// TODO: This should return in the same model instance
+	/**
+	 * @param   array   $keys  keys to be loaded
+	 * @param   boolean $reset reset flag
+	 *
+	 * @return mixed
+	 * @todo: This should return in the same model instance. Still to be discussed.
+	 */
 	public function load($keys = null, $reset = true)
 	{
 		if ($reset)
@@ -53,27 +102,45 @@ trait EntityTableTrait
 		return $this->find($keys);
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function getProperties()
 	{
 		return $this->getAttributes();
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function getDbo()
 	{
 		return $this->getDb();
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function getId()
 	{
 		return $this->getPrimaryKeyValue();
 	}
 
-	// TODO: Add to entities?
+	/**
+	 * @return boolean
+	 * @todo add to entities
+	 */
 	public function check()
 	{
 		return true;
 	}
 
+	/**
+	 * @param   array $src    assoc array of values for binding
+	 * @param   array $ignore keys to be ignored
+	 *
+	 * @return boolean
+	 */
 	public function bind($src, $ignore = array())
 	{
 		if (is_string($ignore))
@@ -97,15 +164,83 @@ trait EntityTableTrait
 		return true;
 	}
 
-	// TODO: How to deal with nulls
-	public function store($updateNulls = false)
+	/**
+	 * @param   boolean $nulls save nulls flag
+	 *
+	 * @return mixed
+	 */
+	public function store($nulls = false)
 	{
 		return $this->save();
 	}
 
-	// TODO This concept doesn't really exist
+	/**
+	 * @return void
+	 * @todo This concept doesn't really exist
+	 */
 	public function reset()
 	{
 
+	}
+
+	/**
+	 * @param   string $key   attribute name
+	 * @param   mixed  $value attribute value
+	 *
+	 * @return boolean
+	 */
+	public function set($key, $value)
+	{
+		if (property_exists($this, $key))
+		{
+			$this->$key = $value;
+
+			return true;
+		}
+
+		$this->setAttribute($key, $value);
+
+		return true;
+	}
+
+	/**
+	 * Get the columns from database table.
+	 *
+	 * @param   DatabaseDriver $db      database driver instance
+	 * @param   boolean        $reload  flag to reload cache
+	 *
+	 * @return  mixed  An array of the field names, or false if an error occurs.
+	 *
+	 * @throws  \UnexpectedValueException
+	 */
+	public function getFields($db, $reload = false)
+	{
+		// Lookup the fields for this table only once.
+		if (!isset(static::$fieldsCache[$this->getTable()]) || $reload)
+		{
+			$fields = $db->getTableColumns($this->getTable());
+
+			if (empty($fields))
+			{
+				throw new \UnexpectedValueException(sprintf('No columns found for %s table', $name));
+			}
+
+			if (empty($fields))
+			{
+				throw new \UnexpectedValueException(sprintf('No columns found for %s table', $this->getTable()));
+			}
+
+			$fields = array_map(
+				function ($field)
+				{
+					return null;
+				},
+				$fields
+			);
+
+			static::$fieldsCache[$this->getTable()] = $fields;
+		}
+
+		return static::$fieldsCache[$this->getTable()];
 	}
 }

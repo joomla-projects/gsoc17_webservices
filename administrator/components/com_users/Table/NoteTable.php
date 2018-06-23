@@ -28,23 +28,16 @@ class NoteTable extends UserNote implements TableInterface
 	/**
 	 * Constructor
 	 *
-	 * @param   DatabaseDriver  $db  Database object
+	 * @param   DatabaseDriver  $db         Database object
+	 * @param   boolean         $loadFields true if model is preloaded with table columns (null values)
 	 *
 	 * @since  2.5
 	 */
-	public function __construct(DatabaseDriver $db)
+	public function __construct(DatabaseDriver $db, $loadFields = false)
 	{
 		$this->setTypeAlias('com_users.note');
 
-		// TODO hack: Initialise the table properties.
-		$fields = $this->getFields($db);
-
-		$fields = array_map(function ($field)
-		{
-				return null;
-		}, $fields);
-
-		parent::__construct($db, $fields);
+		parent::__construct($db, $loadFields);
 	}
 
 	/**
@@ -163,28 +156,5 @@ class NoteTable extends UserNote implements TableInterface
 		$this->setError('');
 
 		return true;
-	}
-
-	/**
-	 * Get the columns from database table.
-	 *
-	 * @param   bool  $reload  flag to reload cache
-	 *
-	 * @return  mixed  An array of the field names, or false if an error occurs.
-	 *
-	 * @since   11.1
-	 * @throws  \UnexpectedValueException
-	 */
-	public function getFields($db, $reload = false)
-	{
-		// Lookup the fields for this table only once.
-		$fields = $db->getTableColumns("#__user_notes", false);
-
-		if (empty($fields))
-		{
-			throw new \UnexpectedValueException(sprintf('No columns found for %s table', $name));
-		}
-
-		return $fields;
 	}
 }

@@ -11,9 +11,10 @@ namespace Joomla\Component\Users\Administrator\Entity;
 defined('_JEXEC') or die;
 
 /**
- * Class Notes
- * @package Joomla\Component\Users\Administrator\Entitiy
- * @since  __DEPLOY_VERSION__
+ * Class UserNote
+ *
+ * @package  Joomla\Component\Users\Administrator\Entitiy
+ * @since    __DEPLOY_VERSION__
  */
 class UserNote extends \Joomla\Entity\Model
 {
