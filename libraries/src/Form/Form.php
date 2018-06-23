@@ -11,6 +11,7 @@ namespace Joomla\CMS\Form;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Uri\Uri;
+use Joomla\Entity\Model;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Language\Text;
@@ -132,7 +133,6 @@ class Form
 		{
 			return false;
 		}
-
 		$this->bindLevel(null, $data);
 
 		return true;
@@ -162,6 +162,10 @@ class Form
 			{
 				// Handle a CMSObject.
 				$data = $data->getProperties();
+			}
+			elseif ($data instanceof Model)
+			{
+				$data = $data->toArray();
 			}
 			else
 			{

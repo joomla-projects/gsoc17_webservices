@@ -10,28 +10,41 @@ namespace Joomla\Component\Users\Administrator\Table;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Table\Table;
+use Joomla\Component\Users\Administrator\Table\EntityTableTrait;
+use Joomla\Component\Users\Administrator\Entity\UserNote;
+use Joomla\Database\DatabaseDriver;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Table\TableInterface;
 
 /**
  * User notes table class
  *
  * @since  2.5
  */
-class NoteTable extends Table
+class NoteTable extends UserNote implements TableInterface
 {
+	use EntityTableTrait;
+
 	/**
 	 * Constructor
 	 *
-	 * @param   \JDatabaseDriver  $db  Database object
+	 * @param   DatabaseDriver  $db  Database object
 	 *
 	 * @since  2.5
 	 */
-	public function __construct(\JDatabaseDriver $db)
+	public function __construct(DatabaseDriver $db)
 	{
-		$this->typeAlias = 'com_users.note';
+		$this->setTypeAlias('com_users.note');
 
-		parent::__construct('#__user_notes', 'id', $db);
+		// TODO hack: Initialise the table properties.
+		$fields = $this->getFields($db);
+
+		$fields = array_map(function ($field)
+		{
+				return null;
+		}, $fields);
+
+		parent::__construct($db, $fields);
 	}
 
 	/**
@@ -45,30 +58,20 @@ class NoteTable extends Table
 	 */
 	public function store($updateNulls = false)
 	{
-		$date = \JFactory::getDate()->toSql();
 		$userId = \JFactory::getUser()->get('id');
-
-		if (!((int) $this->review_time))
-		{
-			// Null date.
-			$this->review_time = \JFactory::getDbo()->getNullDate();
-		}
 
 		if ($this->id)
 		{
-			// Existing item
-			$this->modified_time    = $date;
 			$this->modified_user_id = $userId;
 		}
 		else
 		{
-			// New record.
-			$this->created_time = $date;
+			$this->modified_user_id = 0;
 			$this->created_user_id = $userId;
 		}
 
 		// Attempt to store the data.
-		return parent::store($updateNulls);
+		return $this->save();
 	}
 
 	/**
@@ -163,28 +166,25 @@ class NoteTable extends Table
 	}
 
 	/**
-	 * Method to perform sanity checks on the Table instance properties to ensure they are safe to store in the database.
+	 * Get the columns from database table.
 	 *
-	 * @return  boolean  True if the instance is sane and able to be stored in the database.
+	 * @param   bool  $reload  flag to reload cache
 	 *
-	 * @since   4.0.0
+	 * @return  mixed  An array of the field names, or false if an error occurs.
+	 *
+	 * @since   11.1
+	 * @throws  \UnexpectedValueException
 	 */
-	public function check()
+	public function getFields($db, $reload = false)
 	{
-		try
-		{
-			parent::check();
-		}
-		catch (\Exception $e)
-		{
-			$this->setError($e->getMessage());
+		// Lookup the fields for this table only once.
+		$fields = $db->getTableColumns("#__user_notes", false);
 
-			return false;
+		if (empty($fields))
+		{
+			throw new \UnexpectedValueException(sprintf('No columns found for %s table', $name));
 		}
 
-		if (empty($this->modified_time))
-		{
-			$this->modified_time = $this->getDbo()->getNullDate();
-		}
+		return $fields;
 	}
 }
