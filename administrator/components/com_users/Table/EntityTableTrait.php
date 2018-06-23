@@ -40,8 +40,8 @@ trait EntityTableTrait
 	/**
 	 * Constructor
 	 *
-	 * @param   DatabaseDriver  $db         Database object
-	 * @param   boolean         $loadFields true if model is preloaded with table columns (null values)
+	 * @param   DatabaseDriver  $db          Database object
+	 * @param   boolean         $loadFields  true if model is preloaded with table columns (null values)
 	 *
 	 * @since  2.5
 	 */
@@ -61,6 +61,8 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Getter for Type Alias
+	 *
 	 * @return mixed
 	 */
 	public function getTypeAlias()
@@ -69,7 +71,9 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param   mixed $type_alias type alias
+	 * Setter for type alias
+	 *
+	 * @param   mixed  $type_alias  type alias
 	 * @return void
 	 */
 	public function setTypeAlias($type_alias)
@@ -78,6 +82,8 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Wrapper for getPrimaryKey
+	 *
 	 * @return mixed
 	 */
 	public function getKeyName()
@@ -86,10 +92,13 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param   array   $keys  keys to be loaded
-	 * @param   boolean $reset reset flag
+	 * Load function
+	 *
+	 * @param   array    $keys   keys to be loaded
+	 * @param   boolean  $reset  reset flag
 	 *
 	 * @return mixed
+	 *
 	 * @todo: This should return in the same model instance. Still to be discussed.
 	 */
 	public function load($keys = null, $reset = true)
@@ -103,6 +112,8 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Wrapper for getAttributes
+	 *
 	 * @return mixed
 	 */
 	public function getProperties()
@@ -111,6 +122,8 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Wrapper for getDb
+	 *
 	 * @return mixed
 	 */
 	public function getDbo()
@@ -119,6 +132,8 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Wrapper for getPrimaryKeyValue
+	 *
 	 * @return mixed
 	 */
 	public function getId()
@@ -127,7 +142,10 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Check function
+	 *
 	 * @return boolean
+	 *
 	 * @todo add to entities
 	 */
 	public function check()
@@ -136,8 +154,10 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param   array $src    assoc array of values for binding
-	 * @param   array $ignore keys to be ignored
+	 * Bind function
+	 *
+	 * @param   array  $src     assoc array of values for binding
+	 * @param   array  $ignore  keys to be ignored
 	 *
 	 * @return boolean
 	 */
@@ -165,17 +185,22 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param   boolean $nulls save nulls flag
+	 * Store function
+	 *
+	 * @param   boolean  $nulls  save nulls flag
 	 *
 	 * @return mixed
 	 */
 	public function store($nulls = false)
 	{
-		return $this->save();
+		return $this->save($nulls);
 	}
 
 	/**
+	 * Reset function
+	 *
 	 * @return void
+	 *
 	 * @todo This concept doesn't really exist
 	 */
 	public function reset()
@@ -184,8 +209,10 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * @param   string $key   attribute name
-	 * @param   mixed  $value attribute value
+	 * Set function
+	 *
+	 * @param   string  $key    attribute name
+	 * @param   mixed   $value  attribute value
 	 *
 	 * @return boolean
 	 */
@@ -206,8 +233,8 @@ trait EntityTableTrait
 	/**
 	 * Get the columns from database table.
 	 *
-	 * @param   DatabaseDriver $db      database driver instance
-	 * @param   boolean        $reload  flag to reload cache
+	 * @param   DatabaseDriver  $db      database driver instance
+	 * @param   boolean         $reload  flag to reload cache
 	 *
 	 * @return  mixed  An array of the field names, or false if an error occurs.
 	 *

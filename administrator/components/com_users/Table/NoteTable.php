@@ -28,8 +28,8 @@ class NoteTable extends UserNote implements TableInterface
 	/**
 	 * Constructor
 	 *
-	 * @param   DatabaseDriver  $db         Database object
-	 * @param   boolean         $loadFields true if model is preloaded with table columns (null values)
+	 * @param   DatabaseDriver  $db          Database object
+	 * @param   boolean         $loadFields  true if model is preloaded with table columns (null values)
 	 *
 	 * @since  2.5
 	 */
