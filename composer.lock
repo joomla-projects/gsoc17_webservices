@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c83e2fd56a75dc5ebba026fdb86bf68",
+    "content-hash": "c233248a8cfb755f627c7c4c0348be6c",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -1122,6 +1122,51 @@
             "time": "2018-02-25T16:34:27+00:00"
         },
         {
+            "name": "joomla/entities",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-projects/entities.git",
+                "reference": "0ae28e9c34377041f673ff1887742e029c36014f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-projects/entities/zipball/0ae28e9c34377041f673ff1887742e029c36014f",
+                "reference": "0ae28e9c34377041f673ff1887742e029c36014f",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/inflector": "1.2.0",
+                "joomla/database": "~2.0@dev",
+                "joomla/event": "~2.0@dev",
+                "joomla/string": "~2.0@dev",
+                "nesbot/carbon": "~1.29",
+                "php": "~7.0"
+            },
+            "require-dev": {
+                "joomla/coding-standards": "~2.0@alpha",
+                "phpunit/dbunit": "~3.0",
+                "phpunit/phpunit": "~6.3"
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Entity\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Joomla Entity Project",
+            "homepage": "https://github.com/joomla-projects/entities",
+            "keywords": [
+                "entity",
+                "joomla"
+            ],
+            "time": "2018-06-20T10:24:06+00:00"
+        },
+        {
             "name": "joomla/event",
             "version": "dev-2.0-dev",
             "source": {
@@ -1930,6 +1975,54 @@
             "time": "2016-06-19T18:08:43+00:00"
         },
         {
+            "name": "nesbot/carbon",
+            "version": "1.30.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/briannesbitt/Carbon.git",
+                "reference": "863a1a651ea324e1838da3a52753a4239b9d4bea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/863a1a651ea324e1838da3a52753a4239b9d4bea",
+                "reference": "863a1a651ea324e1838da3a52753a4239b9d4bea",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "symfony/translation": "~2.6 || ~3.0 || ~4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2",
+                "phpunit/phpunit": "^4.8.35 || ^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Nesbitt",
+                    "email": "brian@nesbot.com",
+                    "homepage": "http://nesbot.com"
+                }
+            ],
+            "description": "A simple API extension for DateTime.",
+            "homepage": "http://carbon.nesbot.com",
+            "keywords": [
+                "date",
+                "datetime",
+                "time"
+            ],
+            "time": "2018-06-15T11:52:26+00:00"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v2.0.12",
             "source": {
@@ -2601,6 +2694,74 @@
                 "shim"
             ],
             "time": "2018-04-26T10:06:28+00:00"
+        },
+        {
+            "name": "symfony/translation",
+            "version": "v3.4.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/translation.git",
+                "reference": "7047f725e35eab768137c677f8c38e4a2a8e38fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/7047f725e35eab768137c677f8c38e4a2a8e38fb",
+                "reference": "7047f725e35eab768137c677f8c38e4a2a8e38fb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "conflict": {
+                "symfony/config": "<2.8",
+                "symfony/dependency-injection": "<3.4",
+                "symfony/yaml": "<3.4"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "~2.8|~3.0|~4.0",
+                "symfony/dependency-injection": "~3.4|~4.0",
+                "symfony/finder": "~2.8|~3.0|~4.0",
+                "symfony/intl": "^2.8.18|^3.2.5|~4.0",
+                "symfony/yaml": "~3.4|~4.0"
+            },
+            "suggest": {
+                "psr/log-implementation": "To use logging capability in translator",
+                "symfony/config": "",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Translation\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Translation Component",
+            "homepage": "https://symfony.com",
+            "time": "2018-05-21T10:06:52+00:00"
         },
         {
             "name": "symfony/web-link",
@@ -3933,7 +4094,7 @@
                 "acceptance testing",
                 "joomla"
             ],
-            "time": "2018-05-15T13:46:14+00:00"
+            "time": "2018-05-15 13:46:14"
         },
         {
             "name": "joomla-projects/robo-joomla",
@@ -3970,7 +4131,7 @@
                 }
             ],
             "description": "Robo tasks for Joomla! development, build, testing and everything",
-            "time": "2018-04-02T19:00:40+00:00"
+            "time": "2018-04-02 19:00:40"
         },
         {
             "name": "joomla-projects/selenium-server-standalone",
@@ -4099,7 +4260,7 @@
                 "cms",
                 "joomla"
             ],
-            "time": "2018-05-19T08:17:12+00:00"
+            "time": "2018-05-19 08:17:12"
         },
         {
             "name": "joomla/test-system",
@@ -4133,7 +4294,7 @@
                 "cms",
                 "joomla"
             ],
-            "time": "2018-05-15T13:20:55+00:00"
+            "time": "2018-05-15 13:20:55"
         },
         {
             "name": "joomla/test-unit",
@@ -4165,7 +4326,7 @@
                 "tests",
                 "unit-tests"
             ],
-            "time": "2018-05-15T10:32:39+00:00"
+            "time": "2018-05-15 10:32:39"
         },
         {
             "name": "league/container",
@@ -6261,6 +6422,7 @@
         "joomla/database": 20,
         "joomla/di": 20,
         "joomla/event": 20,
+        "joomla/entities": 20,
         "joomla/http": 20,
         "joomla/image": 20,
         "joomla/ldap": 20,
