@@ -74,6 +74,7 @@ trait EntityTableTrait
 	 * Setter for type alias
 	 *
 	 * @param   mixed  $type_alias  type alias
+	 *
 	 * @return void
 	 */
 	public function setTypeAlias($type_alias)
