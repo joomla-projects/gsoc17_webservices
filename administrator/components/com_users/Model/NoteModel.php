@@ -85,14 +85,7 @@ class NoteModel extends AdminModel
 	 */
 	public function getItem($pk = null)
 	{
-		if (!$pk)
-		{
-			$result = $this->entity;
-		}
-		else
-		{
-			$result = $this->entity->find($pk);
-		}
+		$result = parent::getItem($pk);
 
 		// Get the dispatcher and load the content plugins.
 		PluginHelper::importPlugin('content');

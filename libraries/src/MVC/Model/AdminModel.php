@@ -12,6 +12,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Table\Table;
+use Joomla\Entity\Model;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
@@ -721,7 +722,15 @@ abstract class AdminModel extends FormModel
 			}
 			else
 			{
-				$this->setError($table->getError());
+				if ($table instanceof Table)
+				{
+					$this->setError($table->getError());
+				}
+				else
+				{
+					// Throw exception
+					throw new \Exception("error");
+				}
 
 				return false;
 			}
@@ -888,7 +897,7 @@ abstract class AdminModel extends FormModel
 	 *
 	 * @param   integer  $pk  The id of the primary key.
 	 *
-	 * @return  \JObject|boolean  Object on success, false on failure.
+	 * @return  \JObject|Model|boolean  Object on success, false on failure.
 	 *
 	 * @since   1.6
 	 */
@@ -896,6 +905,26 @@ abstract class AdminModel extends FormModel
 	{
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
 		$table = $this->getTable();
+
+		if ($table instanceof Model)
+		{
+			if ($pk > 0)
+			{
+				/** Attempt to load the row. Here we can also use find.
+				 * @todo This is very inneficient, getItem is called multiple times on page load
+				 * so, it queries the database for the same data at least twice.
+				 */
+				$return = $table->load($pk);
+
+				// Check for a table object error.
+				if ($return === false)
+				{
+					throw new \Exception("error");
+				}
+			}
+
+			return $table;
+		}
 
 		if ($pk > 0)
 		{

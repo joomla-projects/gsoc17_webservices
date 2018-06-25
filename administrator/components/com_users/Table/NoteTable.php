@@ -19,6 +19,8 @@ use Joomla\CMS\Table\TableInterface;
 /**
  * User notes table class
  *
+ * @note In the user_note table you absolutely need the checked_out and checked_out_time columns
+ *
  * @since  2.5
  */
 class NoteTable extends UserNote implements TableInterface
@@ -33,11 +35,24 @@ class NoteTable extends UserNote implements TableInterface
 	 *
 	 * @since  2.5
 	 */
-	public function __construct(DatabaseDriver $db, $loadFields = false)
+	public function __construct(DatabaseDriver $db, $loadFields = true)
 	{
 		$this->setTypeAlias('com_users.note');
 
-		parent::__construct($db, $loadFields);
+		$dispatcher = \JFactory::getApplication()->getDispatcher();
+
+		$this->setDispatcher($dispatcher);
+
+		// TODO hack: Initialise the table properties. Needed for loading data from forms.
+		if ($loadFields)
+		{
+			$fields = $this->getFields($db);
+			parent::__construct($db, $fields);
+		}
+		else
+		{
+			parent::__construct($db);
+		}
 	}
 
 	/**
@@ -64,7 +79,7 @@ class NoteTable extends UserNote implements TableInterface
 		}
 
 		// Attempt to store the data.
-		return $this->save();
+		return $this->save($updateNulls);
 	}
 
 	/**
@@ -82,7 +97,7 @@ class NoteTable extends UserNote implements TableInterface
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
-		$k = $this->_tbl_key;
+		$k = $this->getPrimaryKey();
 
 		// Sanitize input.
 		$pks = ArrayHelper::toInteger($pks);
@@ -99,51 +114,44 @@ class NoteTable extends UserNote implements TableInterface
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(\JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				// $this->setError(\JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
 		}
 
-		$query = $this->_db->getQuery(true)
-			->update($this->_db->quoteName($this->_tbl))
-			->set($this->_db->quoteName('state') . ' = ' . (int) $state);
+		$query = $this->getDb()->getQuery(true);
+		$fields = array($this->getColumnAlias('state') . '=' . (int) $state);
+
+		$query->update($this->getTable())
+			->set($fields);
 
 		// Build the WHERE clause for the primary keys.
 		$query->where($k . '=' . implode(' OR ' . $k . '=', $pks));
 
-		// Determine if there is checkin support for the table.
-		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time'))
-		{
-			$checkin = false;
-		}
-		else
-		{
-			$query->where('(checked_out = 0 OR checked_out = ' . (int) $userId . ')');
-			$checkin = true;
-		}
+		$query->where('(checked_out = 0 OR checked_out = ' . (int) $userId . ')');
 
 		// Update the publishing state for rows with the given primary keys.
-		$this->_db->setQuery($query);
+		$this->getDb()->setQuery($query);
 
 		try
 		{
-			$this->_db->execute();
+			$this->getDb()->execute();
 		}
 		catch (\RuntimeException $e)
 		{
-			$this->setError($this->_db->getMessage());
+			// $this->setError($this->_db->getMessage());
 
 			return false;
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
-		if ($checkin && (count($pks) == $this->_db->getAffectedRows()))
+		if (count($pks) == $this->getDb()->getAffectedRows())
 		{
 			// Checkin the rows.
 			foreach ($pks as $pk)
 			{
-				$this->checkin($pk);
+				$this->checkIn($pk);
 			}
 		}
 
@@ -153,7 +161,7 @@ class NoteTable extends UserNote implements TableInterface
 			$this->state = $state;
 		}
 
-		$this->setError('');
+		// $this->setError('');
 
 		return true;
 	}

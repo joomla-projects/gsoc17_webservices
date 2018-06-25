@@ -15,6 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\Form\FormFactoryAwareTrait;
 use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -101,7 +102,7 @@ abstract class FormModel extends BaseDatabaseModel implements FormFactoryAwareIn
 			$checkedOutTimeField = $table->getColumnAlias('checked_out_time');
 
 			// If there is no checked_out or checked_out_time field, just return true.
-			if (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField))
+			if ($table instanceof Table && (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField)))
 			{
 				return true;
 			}
@@ -153,10 +154,13 @@ abstract class FormModel extends BaseDatabaseModel implements FormFactoryAwareIn
 			$checkedOutField = $table->getColumnAlias('checked_out');
 			$checkedOutTimeField = $table->getColumnAlias('checked_out_time');
 
-			// If there is no checked_out or checked_out_time field, just return true.
-			if (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField))
+			if ($table instanceof Table)
 			{
-				return true;
+				// If there is no checked_out or checked_out_time field, just return true.
+				if (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField))
+				{
+					return true;
+				}
 			}
 
 			$user = \JFactory::getUser();

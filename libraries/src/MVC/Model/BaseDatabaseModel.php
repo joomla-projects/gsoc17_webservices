@@ -19,6 +19,7 @@ use Joomla\CMS\MVC\Factory\MVCFactoryServiceInterface;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Entity\Model;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -481,7 +482,7 @@ abstract class BaseDatabaseModel extends CMSObject
 	 * @param   string  $prefix   The class prefix. Optional.
 	 * @param   array   $options  Configuration array for model. Optional.
 	 *
-	 * @return  Table  A Table object
+	 * @return  Table|Model  A Table or Model object
 	 *
 	 * @since   3.0
 	 * @throws  \Exception
