@@ -655,6 +655,7 @@ class FormController extends BaseController implements FormFactoryAwareInterface
 		else
 		{
 			$checkin = true;
+
 			// Determine the name of the primary key for the data.
 			if (empty($key))
 			{
