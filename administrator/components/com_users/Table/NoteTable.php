@@ -33,6 +33,7 @@ class NoteTable extends UserNote implements TableInterface
 	 * @param   DatabaseDriver  $db          Database object
 	 * @param   boolean         $loadFields  true if model is preloaded with table columns (null values)
 	 *
+	 * @throws \Exception
 	 * @since  2.5
 	 */
 	public function __construct(DatabaseDriver $db, $loadFields = true)
@@ -43,16 +44,7 @@ class NoteTable extends UserNote implements TableInterface
 
 		$this->setDispatcher($dispatcher);
 
-		// TODO hack: Initialise the table properties. Needed for loading data from forms.
-		if ($loadFields)
-		{
-			$fields = $this->getFields($db);
-			parent::__construct($db, $fields);
-		}
-		else
-		{
-			parent::__construct($db);
-		}
+		parent::__construct($db, [], $loadFields);
 	}
 
 	/**

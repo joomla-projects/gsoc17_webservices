@@ -36,13 +36,6 @@ trait EntityTableTrait
 	public $newTags;
 
 	/**
-	 * The cache of the columns attributes for each table.
-	 *
-	 * @var array
-	 */
-	public static $fieldsCache = [];
-
-	/**
 	 * Getter for Type Alias
 	 *
 	 * @return mixed
@@ -184,19 +177,6 @@ trait EntityTableTrait
 	}
 
 	/**
-	 * Reset function
-	 *
-	 * @return void
-	 *
-	 * @todo This concept doesn't really exist
-	 */
-	public function reset()
-	{
-		$this->exists = false;
-		$this->setAttributesRaw($this->getFields($this->getDb()));
-	}
-
-	/**
 	 * Set function
 	 *
 	 * @param   string  $key    attribute name
@@ -216,42 +196,6 @@ trait EntityTableTrait
 		$this->setAttribute($key, $value);
 
 		return true;
-	}
-
-	/**
-	 * Get the columns from database table.
-	 *
-	 * @param   DatabaseDriver  $db      database driver instance
-	 * @param   boolean         $reload  flag to reload cache
-	 *
-	 * @return  mixed  An array of the field names, or false if an error occurs.
-	 *
-	 * @throws  \UnexpectedValueException
-	 */
-	public function getFields($db, $reload = false)
-	{
-		// Lookup the fields for this table only once.
-		if (!isset(static::$fieldsCache[$this->getTable()]) || $reload)
-		{
-			$fields = $db->getTableColumns($this->getTable());
-
-			if (empty($fields))
-			{
-				throw new \UnexpectedValueException(sprintf('No columns found for %s table', $this->getTable()));
-			}
-
-			$fields = array_map(
-				function ($field)
-				{
-					return null;
-				},
-				$fields
-			);
-
-			static::$fieldsCache[$this->getTable()] = $fields;
-		}
-
-		return static::$fieldsCache[$this->getTable()];
 	}
 
 	/**
