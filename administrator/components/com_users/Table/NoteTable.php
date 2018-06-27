@@ -10,8 +10,8 @@ namespace Joomla\Component\Users\Administrator\Table;
 
 defined('_JEXEC') or die;
 
-use Joomla\Component\Users\Administrator\Table\EntityTableTrait;
-use Joomla\Component\Users\Administrator\Entity\UserNote;
+use Joomla\CMS\Entity\EntityTableTrait;
+use Joomla\CMS\Entity\UserNote;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Table\TableInterface;
