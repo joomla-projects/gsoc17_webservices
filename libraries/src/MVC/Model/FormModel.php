@@ -102,7 +102,7 @@ abstract class FormModel extends BaseDatabaseModel implements FormFactoryAwareIn
 			$checkedOutTimeField = $table->getColumnAlias('checked_out_time');
 
 			// If there is no checked_out or checked_out_time field, just return true.
-			if ($table instanceof Table && (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField)))
+			if (!$table->hasField($checkedOutField) || !$table->hasField($checkedOutTimeField))
 			{
 				return true;
 			}
@@ -154,13 +154,10 @@ abstract class FormModel extends BaseDatabaseModel implements FormFactoryAwareIn
 			$checkedOutField = $table->getColumnAlias('checked_out');
 			$checkedOutTimeField = $table->getColumnAlias('checked_out_time');
 
-			if ($table instanceof Table)
+			// If there is no checked_out or checked_out_time field, just return true.
+			if (!$table->hasField($checkedOutField) || !$table->hasField($checkedOutTimeField))
 			{
-				// If there is no checked_out or checked_out_time field, just return true.
-				if (!property_exists($table, $checkedOutField) || !property_exists($table, $checkedOutTimeField))
-				{
-					return true;
-				}
+				return true;
 			}
 
 			$user = \JFactory::getUser();

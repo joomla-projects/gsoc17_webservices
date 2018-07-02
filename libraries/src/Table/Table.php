@@ -1819,7 +1819,7 @@ abstract class Table extends \JObject implements \JTableInterface, DispatcherAwa
 				->set($this->_db->quoteName($publishedField) . ' = ' . (int) $state);
 
 			// If publishing, set published date/time if not previously set
-			if ($state && src && (int) $this->publish_up == 0)
+			if ($state && $this->hasField('publish_up') && (int) $this->publish_up == 0)
 			{
 				$nowDate = $this->_db->quote(\JFactory::getDate()->toSql());
 				$query->set($this->_db->quoteName($this->getColumnAlias('publish_up')) . ' = ' . $nowDate);
@@ -1970,5 +1970,19 @@ abstract class Table extends \JObject implements \JTableInterface, DispatcherAwa
 		$this->_locked = false;
 
 		return true;
+	}
+
+	/**
+	 * Check is the instance has a property
+	 *
+	 * @param   string  $key key to be checked
+	 *
+	 * @return boolean
+	 */
+	public function hasField($key)
+	{
+		$key = $this->getColumnAlias($key);
+
+		return property_exists($this, $key);
 	}
 }

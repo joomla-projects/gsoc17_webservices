@@ -44,7 +44,7 @@ class NoteTable extends UserNote implements TableInterface
 
 		$this->setDispatcher($dispatcher);
 
-		parent::__construct($db, [], $loadFields);
+		parent::__construct($db);
 	}
 
 	/**
