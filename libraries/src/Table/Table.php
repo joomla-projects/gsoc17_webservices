@@ -1975,7 +1975,7 @@ abstract class Table extends \JObject implements \JTableInterface, DispatcherAwa
 	/**
 	 * Check is the instance has a property
 	 *
-	 * @param   string  $key key to be checked
+	 * @param   string  $key  key to be checked
 	 *
 	 * @return boolean
 	 */
