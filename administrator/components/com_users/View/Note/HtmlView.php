@@ -61,13 +61,11 @@ class HtmlView extends BaseHtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		/** @todo, hwo do we handle errors?
-		 * Check for errors.
-		 * if (count($errors = $this->get('Errors')))
-		 * {
-		 * 	throw new \JViewGenericdataexception(implode("\n", $errors), 500);
-		 * }
-		 */
+		// Check for errors.
+		if (count($errors = $this->get('Errors')))
+		{
+			throw new \JViewGenericdataexception(implode("\n", $errors), 500);
+		}
 
 		// Get the component HTML helpers
 		\JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');

@@ -51,4 +51,9 @@ class UserNote extends \Joomla\Entity\Model
 	 * @var string
 	 */
 	protected $table = "#__user_notes";
+
+	/**
+	 * @var array
+	 */
+	public $newTags;
 }

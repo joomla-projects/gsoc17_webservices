@@ -10,6 +10,7 @@ namespace Joomla\Component\Users\Administrator\Table;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Entity\EntityTableFormTrait;
 use Joomla\CMS\Entity\EntityTableTrait;
 use Joomla\CMS\Entity\UserNote;
 use Joomla\Database\DatabaseDriver;
@@ -26,6 +27,7 @@ use Joomla\CMS\Table\TableInterface;
 class NoteTable extends UserNote implements TableInterface
 {
 	use EntityTableTrait;
+	use EntityTableFormTrait;
 
 	/**
 	 * Constructor
@@ -106,8 +108,6 @@ class NoteTable extends UserNote implements TableInterface
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				// $this->setError(\JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
-
 				return false;
 			}
 		}
@@ -121,24 +121,21 @@ class NoteTable extends UserNote implements TableInterface
 		// Build the WHERE clause for the primary keys.
 		$query->where($k . '=' . implode(' OR ' . $k . '=', $pks));
 
-		$query->where('(checked_out = 0 OR checked_out = ' . (int) $userId . ')');
+		if (!$this->hasField('checked_out') || !$this->hasField('checked_out_time'))
+		{
+			$checkin = false;
+		}
+		else
+		{
+			$query->where('(checked_out = 0 OR checked_out = ' . (int) $userId . ')');
+			$checkin = true;
+		}
 
 		// Update the publishing state for rows with the given primary keys.
-		$this->getDb()->setQuery($query);
-
-		try
-		{
-			$this->getDb()->execute();
-		}
-		catch (\RuntimeException $e)
-		{
-			// $this->setError($this->_db->getMessage());
-
-			return false;
-		}
+		$this->getDb()->setQuery($query)->execute();
 
 		// If checkin is supported and all rows were adjusted, check them in.
-		if (count($pks) == $this->getDb()->getAffectedRows())
+		if ($checkin && count($pks) == $this->getDb()->getAffectedRows())
 		{
 			// Checkin the rows.
 			foreach ($pks as $pk)
@@ -147,13 +144,11 @@ class NoteTable extends UserNote implements TableInterface
 			}
 		}
 
-		// If the \JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Entity instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks))
 		{
 			$this->state = $state;
 		}
-
-		// $this->setError('');
 
 		return true;
 	}
