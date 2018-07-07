@@ -1200,6 +1200,7 @@ class ComposerStaticInitb3f90d0e0764a1ad25163726533579c0
         'Joomla\\Entity\\ModelHelpers\\Serialization' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Serialization.php',
         'Joomla\\Entity\\ModelHelpers\\Timestamps' => __DIR__ . '/..' . '/joomla/entities/src/ModelHelpers/Timestamps.php',
         'Joomla\\Entity\\Query' => __DIR__ . '/..' . '/joomla/entities/src/Query.php',
+        'Joomla\\Entity\\Relations\\BelongsTo' => __DIR__ . '/..' . '/joomla/entities/src/Relations/BelongsTo.php',
         'Joomla\\Entity\\Relations\\HasMany' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasMany.php',
         'Joomla\\Entity\\Relations\\HasOne' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasOne.php',
         'Joomla\\Entity\\Relations\\HasOneOrMany' => __DIR__ . '/..' . '/joomla/entities/src/Relations/HasOneOrMany.php',

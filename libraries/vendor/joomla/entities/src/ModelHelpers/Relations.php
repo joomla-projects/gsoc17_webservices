@@ -9,11 +9,13 @@
 namespace Joomla\Entity\ModelHelpers;
 
 use Joomla\Entity\Query;
-use \Joomla\Entity\Relations\HasOne;
-use \Joomla\Entity\Model;
-use \Joomla\Entity\Relations\HasMany;
-use \Joomla\Entity\Helpers\Collection;
+use Joomla\Entity\Model;
+use Joomla\Entity\Helpers\Collection;
+use Joomla\Entity\Relations\HasOne;
+use Joomla\Entity\Relations\HasMany;
+use Joomla\Entity\Relations\BelongsTo;
 use Joomla\String\Inflector;
+use Joomla\String\Normalise;
 
 /**
  * Trait Relations
@@ -205,5 +207,42 @@ trait Relations
 	protected function newHasMany($query, $parent, $foreignKey, $localKey)
 	{
 		return new HasMany($query, $parent, $foreignKey, $localKey);
+	}
+
+	/**
+	 * Define an inverse one-to-one or many relation.
+	 *
+	 * @param   string  $related    related Model
+	 * @param   string  $relation   relation name, must be the same as the caller function
+	 * @param   string  $foreignKey foreign key name in current mode
+	 * @param   string  $ownerKey   the associated key on the parent model.
+	 * @return \Joomla\Entity\Relations\BelongsTo
+	 */
+	public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+	{
+		$instance = $this->newRelatedInstance($related);
+
+		$foreignKey = $foreignKey ?: Normalise::toUnderscoreSeparated($relation) . '_' . $instance->getPrimaryKey();
+
+		$ownerKey = $ownerKey ?: $instance->getPrimaryKey();
+
+		return $this->newBelongsTo(
+			$instance->newQuery(), $this, $foreignKey, $ownerKey, $relation
+		);
+	}
+
+	/**
+	 * Instantiate a new BelongsTo relation.
+	 *
+	 * @param   Query   $query      Query instance
+	 * @param   Model   $child      child Model instance
+	 * @param   string  $foreignKey foreign key name
+	 * @param   string  $ownerKey   the associated key on the parent model.
+	 * @param   string  $relation   relation name
+	 * @return \Joomla\Entity\Relations\BelongsTo
+	 */
+	protected function newBelongsTo(Query $query, Model $child, $foreignKey, $ownerKey, $relation)
+	{
+		return new BelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
 	}
 }

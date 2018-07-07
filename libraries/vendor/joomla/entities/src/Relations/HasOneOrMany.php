@@ -81,7 +81,7 @@ abstract class HasOneOrMany extends Relation
 	 * Match the eagerly loaded results to their single parents.
 	 *
 	 * @param   array       $models   array of model instances
-	 * @param   Collection  $results  Collection of results (Relation Instances)
+	 * @param   Collection  $results  Collection of results
 	 * @param   string      $relation relation name
 	 * @return array
 	 */
@@ -94,7 +94,7 @@ abstract class HasOneOrMany extends Relation
 	 * Match the eagerly loaded results to their many parents.
 	 *
 	 * @param   array       $models   array of model instances
-	 * @param   Collection  $results  Collection of results (Relation Instances)
+	 * @param   Collection  $results  Collection of results
 	 * @param   string      $relation relation name
 	 * @return array
 	 */
@@ -107,7 +107,7 @@ abstract class HasOneOrMany extends Relation
 	 * Match the eagerly loaded results to their many parents.
 	 *
 	 * @param   array       $models   array of model instances
-	 * @param   Collection  $results  Collection of results (Relation Instances)
+	 * @param   Collection  $results  Collection of results
 	 * @param   string      $relation relation name
 	 * @param   string      $type     'one' or 'many'
 	 * @return array

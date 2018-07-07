@@ -3111,12 +3111,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/joomla-projects/entities.git",
-            "reference": "0ae28e9c34377041f673ff1887742e029c36014f"
+            "reference": "4416764a758eb7f09e6caa7c36b27a362357df39"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/joomla-projects/entities/zipball/0ae28e9c34377041f673ff1887742e029c36014f",
-            "reference": "0ae28e9c34377041f673ff1887742e029c36014f",
+            "url": "https://api.github.com/repos/joomla-projects/entities/zipball/4416764a758eb7f09e6caa7c36b27a362357df39",
+            "reference": "4416764a758eb7f09e6caa7c36b27a362357df39",
             "shasum": ""
         },
         "require": {
@@ -3132,7 +3132,7 @@
             "phpunit/dbunit": "~3.0",
             "phpunit/phpunit": "~6.3"
         },
-        "time": "2018-06-20T10:24:06+00:00",
+        "time": "2018-07-05T20:01:24+00:00",
         "type": "project",
         "installation-source": "dist",
         "autoload": {
