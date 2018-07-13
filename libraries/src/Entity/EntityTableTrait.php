@@ -192,7 +192,7 @@ trait EntityTableTrait
 	 */
 	public function store($nulls = false)
 	{
-		return $this->save($nulls);
+		return $this->persist($nulls);
 	}
 
 	/**

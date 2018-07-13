@@ -62,7 +62,7 @@ trait EntityTableFormTrait
 
 		$this->$checkedOutField = '0';
 		$this->$checkedOutTimeField = $this->getDb()->getNullDate();
-		$this->save();
+		$this->persist();
 
 		// Post-processing by observers
 		$event = AbstractEvent::create(
@@ -122,7 +122,7 @@ trait EntityTableFormTrait
 
 		$this->$checkedOutField = (int) $userId;
 		$this->$checkedOutTimeField = $time;
-		$this->save();
+		$this->persist();
 
 		// Post-processing by observers
 		$event = AbstractEvent::create(

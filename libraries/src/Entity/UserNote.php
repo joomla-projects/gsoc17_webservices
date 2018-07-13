@@ -8,6 +8,8 @@
  */
 namespace Joomla\CMS\Entity;
 
+use Joomla\Entity\Model;
+
 defined('_JEXEC') or die;
 
 /**
@@ -16,7 +18,7 @@ defined('_JEXEC') or die;
  * @package  Joomla\Component\Users\Administrator\Entitiy
  * @since    __DEPLOY_VERSION__
  */
-class UserNote extends \Joomla\Entity\Model
+class UserNote extends Model
 {
 	/**
 	 * The attributes that should be mutated to dates. Already aliased!

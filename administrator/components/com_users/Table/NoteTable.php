@@ -73,7 +73,7 @@ class NoteTable extends UserNote implements TableInterface
 		}
 
 		// Attempt to store the data.
-		return $this->save($updateNulls);
+		return $this->persist($updateNulls);
 	}
 
 	/**
