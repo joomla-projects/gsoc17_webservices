@@ -20,6 +20,8 @@ defined('_JEXEC') or die;
  */
 class UserNote extends Model
 {
+	use EntityTableTrait;
+
 	/**
 	 * The attributes that should be mutated to dates. Already aliased!
 	 *

@@ -26,7 +26,6 @@ use Joomla\CMS\Table\TableInterface;
  */
 class NoteTable extends UserNote implements TableInterface
 {
-	use EntityTableTrait;
 	use EntityTableFormTrait;
 
 	/**
