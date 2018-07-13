@@ -61,7 +61,7 @@ trait EntityTableTrait
 	 * Reset function
 	 * Will not throw an error if the column does not exist during reset, but it will be thrown when saving the model.
 	 *
-	 * @param   array          $attributes  pre loads any attributed for the model (user friendly format)
+	 * @param   array  $attributes  pre loads any attributed for the model (user friendly format)
 	 *
 	 * @return void
 	 */
