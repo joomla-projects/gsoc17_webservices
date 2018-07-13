@@ -58,17 +58,4 @@ class HasOne extends HasOneOrMany
 	{
 		return $this->matchOne($models, $results, $relation);
 	}
-
-	/**
-	 * Make a new related instance for the given model.
-	 *
-	 * @param   Model  $parent parent Model instance
-	 * @return Model
-	 */
-	public function newRelatedInstanceFor($parent)
-	{
-		return $this->related->newInstance($parent->getDb())->setAttribute(
-			$this->getForeignKey(), $parent->{$this->localKey}
-		);
-	}
 }

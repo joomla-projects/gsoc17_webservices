@@ -856,6 +856,7 @@ return array(
     'Joomla\\Entity\\ModelHelpers\\Serialization' => $vendorDir . '/joomla/entities/src/ModelHelpers/Serialization.php',
     'Joomla\\Entity\\ModelHelpers\\Timestamps' => $vendorDir . '/joomla/entities/src/ModelHelpers/Timestamps.php',
     'Joomla\\Entity\\Query' => $vendorDir . '/joomla/entities/src/Query.php',
+    'Joomla\\Entity\\Relations\\BelongsTo' => $vendorDir . '/joomla/entities/src/Relations/BelongsTo.php',
     'Joomla\\Entity\\Relations\\HasMany' => $vendorDir . '/joomla/entities/src/Relations/HasMany.php',
     'Joomla\\Entity\\Relations\\HasOne' => $vendorDir . '/joomla/entities/src/Relations/HasOne.php',
     'Joomla\\Entity\\Relations\\HasOneOrMany' => $vendorDir . '/joomla/entities/src/Relations/HasOneOrMany.php',

@@ -21,7 +21,13 @@ use Joomla\String\Normalise;
 /**
  * Base Entity class for items
  *
- * @method find() find(mixed $id, array $columns = ['*'])
+ * @method find()       find(mixed $id, array $columns = ['*'])
+ * @method findLast()   findLast(array $columns = ['*'])
+ * @method first()      first(array $columns = ['*'])
+ * @method exists()     exists(mixed $id)
+ * @method select()     select(array $columns)
+ * @method where()      where(array $conditions, string $glue = 'AND')
+ * @method get()        get(array $columns = ['*'])
  *
  * @package Joomla\Entity
  * @since 1.0
@@ -88,22 +94,26 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	 * @var array
 	 */
 	protected $passThrough = array(
-		'find', 'findLast', 'first'
+		'find', 'findLast', 'first', 'exists', 'select', 'where', 'whereIn', 'get'
 	);
+
+	/**
+	 * The cache of the columns attributes for each table.
+	 *
+	 * @var array
+	 */
+	public static $fieldsCache = [];
 
 	/**
 	 * Create a new Joomla entity model instance.
 	 *
-	 * @param   DatabaseDriver $db         database driver instance
-	 * @param   array          $attributes pre loads any attributed for the model (user friendly format)
+	 * @param   DatabaseDriver $db          database driver instance
+	 * @param   array          $attributes  pre loads any attributed for the model (user friendly format)
+
 	 */
-	public function __construct(DatabaseDriver $db = null, array $attributes = [])
+	public function __construct(DatabaseDriver $db, array $attributes = [])
 	{
 		$this->db = $db;
-
-		$this->setAttributesRaw($attributes);
-
-		$this->setAttributes($attributes);
 
 		$this->originalHidden = $this->hidden;
 
@@ -111,6 +121,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
 		{
 			$this->setDefaultTable();
 		}
+
+		$this->setAttributes($attributes);
+
+		$this->syncOriginal();
+
+		$this->casts[$this->primaryKey] = $this->primaryKeyType;
 	}
 
 	/**
@@ -124,7 +140,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	/**
 	 * @return string
 	 */
-	public function getTable()
+	public function getTableName()
 	{
 		return $this->table;
 	}
@@ -202,7 +218,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 			return $column;
 		}
 
-		return $this->getTable() . '.' . $column;
+		return $this->getTableName() . '.' . $column;
 	}
 
 	/**
@@ -250,7 +266,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 			 return false;
 		}
 
-		return $this->setAttributes($attributes)->save();
+		return $this->setAttributes($attributes)->persist();
 	}
 
 	/**
@@ -287,11 +303,19 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	/**
 	 * Save the model to the database.
 	 *
+	 * @param   boolean  $nulls   True to insert or update null fields or false to ignore them.
+	 *
 	 * @return boolean
 	 */
-	public function save()
+	public function persist($nulls = false)
 	{
 		$query = $this->newQuery();
+
+		// First we update the timestamps on the model if needed.
+		if ($this->usesTimestamps())
+		{
+			$this->updateTimestamps();
+		}
 
 		/** If the model already exists in the database we can just update our record
 		 * that is already in this database using the current IDs in this "where"
@@ -300,7 +324,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 		if ($this->exists)
 		{
 			$saved = $this->isDirty() ?
-				$this->performUpdate($query) : true;
+				$this->performUpdate($query, $nulls) : true;
 		}
 
 		/** If the model is brand new, we'll insert it into our database and set the
@@ -309,7 +333,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 		 */
 		else
 		{
-			$saved = $this->performInsert($query);
+			$saved = $this->performInsert($query, $nulls);
 		}
 
 		/** If the model is successfully saved, we need to sync the original array
@@ -326,17 +350,18 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	/**
 	 * Perform a model insert operation.
 	 *
-	 * @param   Query  $query instance of query
+	 * @param   Query    $query   instance of query
+	 * @param   boolean  $nulls   True to insert null fields or false to ignore them.
 	 * @return boolean
 	 */
-	protected function performInsert(Query $query)
+	protected function performInsert(Query $query, $nulls = false)
 	{
 		if (empty($this->attributesRaw))
 		{
 			 return true;
 		}
 
-		$success = $query->insert();
+		$success = $query->insert($nulls);
 
 		if ($success)
 		{
@@ -349,17 +374,18 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	/**
 	 * Perform a model insert operation.
 	 *
-	 * @param   Query  $query istance of query
+	 * @param   Query    $query   istance of query
+	 * @param   boolean  $nulls   True to update null fields or false to ignore them.
 	 * @return boolean
 	 */
-	protected function performUpdate($query)
+	protected function performUpdate($query, $nulls = false)
 	{
 		if (empty($this->attributesRaw))
 		{
 			 return true;
 		}
 
-		$success = $query->update();
+		$success = $query->update($nulls);
 
 		return $success;
 	}
@@ -573,7 +599,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	{
 		return ! is_null($model) &&
 			$this->getPrimaryKeyValue() === $model->getPrimaryKeyValue() &&
-			$this->getTable() === $model->getTable() &&
+			$this->getTableName() === $model->getTableName() &&
 			$this->getDb() === $model->getDb();
 	}
 
@@ -633,7 +659,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 			return $this->update();
 		}
 
-		return $this->save();
+		return $this->persist();
 	}
 
 	/**
@@ -657,8 +683,13 @@ abstract class Model implements ArrayAccess, JsonSerializable
 			$return = $column;
 		}
 
+		if ($return === '*')
+		{
+			return $return;
+		}
+
 		// Sanitize the name
-		$return = preg_replace('#[^A-Z0-9_]#i', '', $return);
+		$return = preg_replace('#[^`A-Z0-9_]#i', '', $return);
 
 		return $return;
 	}
@@ -691,8 +722,9 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	 * @param   array $array array of column names or attributes
 	 *
 	 * @return array
+	 * @internal
 	 */
-	protected function convertAliasedToRaw($array)
+	public function convertAliasedToRaw($array)
 	{
 		$aliased = [];
 
@@ -733,7 +765,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	 * @param   array|string  $relations relations that should be eager loaded
 	 * @return $this
 	 */
-	public function load($relations)
+	public function eagerLoad($relations)
 	{
 		$query = $this->newQuery()->with(
 			is_string($relations) ? func_get_args() : $relations
@@ -754,7 +786,7 @@ abstract class Model implements ArrayAccess, JsonSerializable
 	{
 		$relations = is_string($relations) ? func_get_args() : $relations;
 
-		return $this->load(
+		return $this->eagerLoad(
 			array_filter($relations,
 				function ($relation)
 				{
@@ -762,5 +794,40 @@ abstract class Model implements ArrayAccess, JsonSerializable
 				}
 			)
 		);
+	}
+
+	/**
+	 * Get the columns from database table.
+	 *
+	 * @param   boolean         $reload  flag to reload cache
+	 *
+	 * @return  mixed  An array of the field names, or false if an error occurs.
+	 *
+	 * @throws  \UnexpectedValueException
+	 */
+	public function getDefaultFields($reload = false)
+	{
+		// Lookup the fields for this table only once.
+		if (!isset(static::$fieldsCache[$this->getTableName()]) || $reload)
+		{
+			$fields = $this->db->getTableColumns($this->getTableName());
+
+			if (empty($fields))
+			{
+				throw new \UnexpectedValueException(sprintf('No columns found for %s table', $this->getTableName()));
+			}
+
+			$fields = array_map(
+				function ($field)
+				{
+					return null;
+				},
+				$fields
+			);
+
+			static::$fieldsCache[$this->getTableName()] = array_keys($fields);
+		}
+
+		return static::$fieldsCache[$this->getTableName()];
 	}
 }

@@ -8,12 +8,14 @@
 
 namespace Joomla\Entity\ModelHelpers;
 
-use Joomla\Entity\Query;
-use \Joomla\Entity\Relations\HasOne;
-use \Joomla\Entity\Model;
-use \Joomla\Entity\Relations\HasMany;
-use \Joomla\Entity\Helpers\Collection;
+use Joomla\Entity\Helpers\StringHelper;
+use Joomla\Entity\Model;
+use Joomla\Entity\Helpers\Collection;
+use Joomla\Entity\Relations\HasOne;
+use Joomla\Entity\Relations\HasMany;
+use Joomla\Entity\Relations\BelongsTo;
 use Joomla\String\Inflector;
+use Joomla\String\Normalise;
 
 /**
  * Trait Relations
@@ -153,25 +155,11 @@ trait Relations
 	{
 		$instance = $this->newRelatedInstance($related);
 
-		$foreignKey = $foreignKey ?: Inflector::singularize($this->table) . '_id';
+		$foreignKey = $foreignKey ?: Inflector::singularize(StringHelper::substr($this->table, 3)) . '_id';
 
 		$localKey = $localKey ?: $this->getPrimaryKey();
 
-		return $this->newHasOne($instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey);
-	}
-
-	/**
-	 * Instantiate a new HasOne relation.
-	 *
-	 * @param   Query   $query      just a query instance
-	 * @param   Model   $parent     $this model instance
-	 * @param   string  $foreignKey foreign key name in current mode
-	 * @param   string  $localKey   local primary key name
-	 * @return HasOne
-	 */
-	protected function newHasOne($query, $parent, $foreignKey, $localKey)
-	{
-		return new HasOne($query, $parent, $foreignKey, $localKey);
+		return new HasOne($instance->newQuery(), $this, $instance->getTableName() . '.' . $foreignKey, $localKey);
 	}
 
 	/**
@@ -186,24 +174,30 @@ trait Relations
 	{
 		$instance = $this->newRelatedInstance($related);
 
-		$foreignKey = $foreignKey ?: Inflector::singularize($this->table) . '_id';
+		$foreignKey = $foreignKey ?: Inflector::singularize(StringHelper::substr($this->table, 3)) . '_id';
 
 		$localKey = $localKey ?: $this->getPrimaryKey();
 
-		return $this->newHasMany($instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey);
+		return new HasMany($instance->newQuery(), $this, $instance->getTableName() . '.' . $foreignKey, $localKey);
 	}
 
 	/**
-	 * Instantiate a new HasMany relation.
+	 * Define an inverse one-to-one or many relation.
 	 *
-	 * @param   Query   $query      just a query instance
-	 * @param   Model   $parent     $this model instance
+	 * @param   string  $related    related Model
+	 * @param   string  $relation   relation name, must be the same as the caller function
 	 * @param   string  $foreignKey foreign key name in current mode
-	 * @param   string  $localKey   local primary key name
-	 * @return \Joomla\Entity\Relations\HasMany
+	 * @param   string  $ownerKey   the associated key on the parent model.
+	 * @return \Joomla\Entity\Relations\BelongsTo
 	 */
-	protected function newHasMany($query, $parent, $foreignKey, $localKey)
+	public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
 	{
-		return new HasMany($query, $parent, $foreignKey, $localKey);
+		$instance = $this->newRelatedInstance($related);
+
+		$foreignKey = $foreignKey ?: Normalise::toUnderscoreSeparated($relation) . '_' . $instance->getPrimaryKey();
+
+		$ownerKey = $ownerKey ?: $instance->getPrimaryKey();
+
+		return new BelongsTo($instance->newQuery(), $this, $foreignKey, $ownerKey, $relation);
 	}
 }

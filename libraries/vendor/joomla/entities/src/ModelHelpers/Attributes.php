@@ -34,6 +34,13 @@ trait Attributes
 	protected $attributesRaw = [];
 
 	/**
+	 * The model's attribute keys that can be nulls.
+	 *
+	 * @var array
+	 */
+	protected $nullables = [];
+
+	/**
 	 * The model's original attributes.
 	 *
 	 * @var array
@@ -73,6 +80,7 @@ trait Attributes
 	 * Array with alias for "special" columns such as ordering, hits etc etc
 	 *
 	 * @var    array
+	 * @todo add docs for this (createdAt, updatedAt)
 	 */
 	protected $columnAlias = [
 		'createdAt' => null,
@@ -100,8 +108,9 @@ trait Attributes
 	/**
 	 * Set a given attribute on the model.
 	 *
-	 * @param   string  $key   attribute name
-	 * @param   mixed   $value model's attribute value
+	 * @param   string  $key          attribute name
+	 * @param   mixed   $value        model's attribute value
+	 *
 	 * @return $this
 	 *
 	 * @throws AttributeNotFoundException
@@ -127,7 +136,7 @@ trait Attributes
 		/** If the aliased attribute does not exist as a column in the table and
 		 * if a set mutator is not defined for this key, we throw an exception.
 		 */
-		if (! array_key_exists($key, $this->attributesRaw) && $key != $this->getPrimaryKey())
+		if (!$this->hasField($key))
 		{
 			throw AttributeNotFoundException::make($this, $key, 'set');
 		}
@@ -135,7 +144,7 @@ trait Attributes
 		/** If an attribute is listed as a "date", we'll convert it from a DateTime
 		 * instance into the database date format from the DatabaseDriver's date format.
 		 */
-		if ($value && $this->isDateAttribute($key))
+		if ($this->isDateAttribute($key))
 		{
 			$value = $this->fromDateTime($value);
 		}
@@ -180,13 +189,13 @@ trait Attributes
 		/** First we check if the key has a column alias,
 		 * if no column alias is found, the same value is returned
 		 */
-		$aliasKey = $this->getColumnAlias($key);
+		$key = $this->getColumnAlias($key);
 
 		/** If the attribute exists in the attribute array or has a "get" mutator we will
 		 * get the attribute's value. Otherwise, we will proceed as if the developers
 		 * are asking for a relation's value. This covers both types of values.
 		 */
-		if (array_key_exists($aliasKey, $this->attributesRaw) || $this->hasGetMutator($aliasKey))
+		if ($this->hasField($key) || $this->hasGetMutator($key))
 		{
 			// Pass in the original key so we don't get the alias of an alias
 			return $this->getAttributeValue($key);
@@ -196,12 +205,12 @@ trait Attributes
 		 * since we don't want to treat any of those methods as relations because
 		 * they are all intended as helper methods and none of these are relations.
 		 */
-		if (method_exists(self::class, $aliasKey))
+		if (method_exists(self::class, $key))
 		{
 			return null;
 		}
 
-		return $this->getRelationValue($aliasKey);
+		return $this->getRelationValue($key);
 	}
 
 	/**
@@ -235,7 +244,7 @@ trait Attributes
 		/** If the aliased attribute does not exist as a column in the table and
 		 * if a get mutator is not defined for this key, we throw an exception.
 		 */
-		if (!array_key_exists($key, $this->attributesRaw) && $key != $this->getPrimaryKey())
+		if (!$this->hasField($key))
 		{
 			throw AttributeNotFoundException::make($this, $key, 'get');
 		}
@@ -334,7 +343,7 @@ trait Attributes
 	/**
 	 * Fill the model with an array of attributes.
 	 *
-	 * @param   array $attributes model's attributes
+	 * @param   array   $attributes   model's attributes
 	 *
 	 * @return $this
 	 *
@@ -414,9 +423,12 @@ trait Attributes
 				continue;
 			}
 
-			$attributes[$key] = $this->serializeDate(
-				$this->asDateTime($attributes[$key])
-			);
+			if ($attributes[$key] !== $this->db->getNullDate())
+			{
+				$date  = $this->asDateTime($attributes[$key]);
+
+				$attributes[$key] = $this->serializeDate($date);
+			}
 		}
 
 		return $attributes;
@@ -434,20 +446,25 @@ trait Attributes
 	{
 		foreach ($mutatedAttributes as $key)
 		{
-			/** We want to spin through all the mutated attributes for this model and call
-			 * the mutator for the attribute. We cache off every mutated attributes so
-			 * we don't have to constantly check on attributes that actually change.
+			/** @todo having the possibility to load the object partially will break the mutators
+			 * when serialising the Model. Maybe we should remove it if we do not need it.
+			 * Mutators can access properties which are normally loaded. Users Should check if the
+			 * field is loaded before using it.
 			 */
-			if (! array_key_exists($key, $attributes))
+			try
 			{
-				continue;
+				if (!array_key_exists($key, $attributes))
+				{
+					$attributes[$key] = $this->mutateAttribute($key, null);
+				}
+				else
+				{
+					$attributes[$key] = $this->mutateAttribute($key, $attributes[$key]);
+				}
 			}
-
-			/** Next, we will call the mutator for this attribute so that we can get these
-			 * mutated attribute's actual values. After we finish mutating each of the
-			 * attributes we will return this final array of the mutated attributes.
-			 */
-			$attributes[$key] = $this->mutateAttribute($key, $attributes[$key]);
+			catch (\Exception $e)
+			{
+			}
 		}
 
 		return $attributes;
@@ -484,7 +501,14 @@ trait Attributes
 			 */
 			if ($attributes[$key] && ($value === 'date' || $value === 'datetime'))
 			{
-				$attributes[$key] = $this->serializeDate($attributes[$key]);
+				if ((int) $attributes[$key]->date <= 0)
+				{
+					$attributes[$key] = $this->db->getNullDate();
+				}
+				else
+				{
+					$attributes[$key] = $this->serializeDate($attributes[$key]);
+				}
 			}
 
 			if ($attributes[$key] && $this->isCustomDateTimeCast($value))
@@ -733,7 +757,12 @@ trait Attributes
 	 */
 	public function fromDateTime($value)
 	{
-		return empty($value) ? $value : $this->asDateTime($value)->format(
+		if ($value === $this->db->getNullDate())
+		{
+			return $value;
+		}
+
+		return (!$value) ? $this->db->getNullDate() : $this->asDateTime($value)->format(
 			$this->getDateFormat()
 		);
 	}
@@ -746,6 +775,11 @@ trait Attributes
 	 */
 	protected function asTimestamp($value)
 	{
+		if ($value === $this->db->getNullDate())
+		{
+			return -1;
+		}
+
 		return $this->asDateTime($value)->getTimestamp();
 	}
 
@@ -1059,5 +1093,32 @@ trait Attributes
 	{
 		return strncmp($cast, 'date:', 5) === 0 ||
 			strncmp($cast, 'datetime:', 9) === 0;
+	}
+
+
+	/**
+	 * @param   string $key attribute name to be check if nullable
+	 *
+	 * @return boolean
+	 */
+	public function isNullable($key)
+	{
+		$key = $this->getColumnAlias($key);
+
+		return array_key_exists($key, $this->nullables);
+	}
+
+	/**
+	 * Check if the field exist in the model
+	 *
+	 * @param   string  $key key to be checked
+	 *
+	 * @return boolean
+	 */
+	public function hasField($key)
+	{
+		$key = $this->getColumnAlias($key);
+
+		return in_array($key, $this->getDefaultFields());
 	}
 }
