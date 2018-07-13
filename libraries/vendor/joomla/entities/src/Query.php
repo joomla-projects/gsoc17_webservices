@@ -78,9 +78,10 @@ class Query
 	/**
 	 * Inserts a single instance of a model.
 	 *
+	 * @param   boolean  $nulls   True to insert null fields or false to ignore them.
 	 * @return boolean
 	 */
-	public function insert()
+	public function insert($nulls = false)
 	{
 		$fields = [];
 		$values = [];
@@ -88,13 +89,16 @@ class Query
 		// Iterate over the object variables to build the query fields and values.
 		foreach ($this->model->getAttributesRaw() as $k => $v)
 		{
-			// Prepare and sanitize the fields and values for the database query.
-			$fields[] = $this->db->quoteName($k);
-			$values[] = $this->db->quote($v);
+			if ($nulls || $v !== null || $this->model->isNullable($k))
+			{
+				// Prepare and sanitize the fields and values for the database query.
+				$fields[] = $this->db->quoteName($k);
+				$values[] = $this->db->quote($v);
+			}
 		}
 
 		// Create the base insert statement.
-		$this->query->insert($this->db->quoteName($this->model->getTable()))
+		$this->query->insert($this->db->quoteName($this->model->getTableName()))
 			->columns($fields)
 			->values(implode(',', $values));
 
@@ -119,22 +123,26 @@ class Query
 	/**
 	 * Updates a single instance of a model.
 	 *
+	 * @param   boolean  $nulls   True to update null fields or false to ignore them.
 	 * @return boolean
 	 */
-	public function update()
+	public function update($nulls)
 	{
 		$fields = [];
 
 		// Iterate over the object variables to build the query fields and values.
 		foreach ($this->model->getDirty() as $k => $v)
 		{
-			if ($v == null)
+			if ($nulls || $v !== null || $this->model->isNullable($k))
 			{
-				$v = 'NULL';
-			}
+				if ($v === null)
+				{
+					$v = 'NULL';
+				}
 
-			// Prepare and sanitize the fields and values for the database query.
-			$fields[] = $this->db->quoteName($k) . '=' . $this->db->quote($v);
+				// Prepare and sanitize the fields and values for the database query.
+				$fields[] = $this->db->quoteName($k) . '=' . $this->db->quote($v);
+			}
 		}
 
 		if (empty($fields))
@@ -143,7 +151,7 @@ class Query
 		}
 
 		$this->query = $this->db->getQuery(true);
-		$this->query->update($this->model->getTable())
+		$this->query->update($this->model->getTableName())
 			->set($fields)
 			->where($this->getWherePrimaryKey());
 
@@ -160,7 +168,7 @@ class Query
 	 */
 	public function delete()
 	{
-		$this->query->delete($this->model->getTable())->where($this->getWherePrimaryKey());
+		$this->query->delete($this->model->getTableName())->where($this->getWherePrimaryKey());
 
 		// Set the query and execute the insert.
 		$success = $this->db->setQuery($this->query)->execute();
@@ -186,8 +194,6 @@ class Query
 	 * @param   mixed  $id      primary key
 	 * @param   array  $columns columns to be selected in query
 	 *
-	 * @todo columns must be raw at this point, do we want them to be unaliased here,
-	 * @todo so that the dev can use the aliased columns?
 	 * @return Model|boolean
 	 */
 	public function find($id, $columns = ['*'])
@@ -202,6 +208,20 @@ class Query
 		}
 
 		return $models->first();
+	}
+
+	/**
+	 * Function to check if row exist. Used to not load the entire row just for this check
+	 *
+	 * @param   mixed  $id  primary key value
+	 *
+	 * @return boolean
+	 */
+	public function exists($id)
+	{
+		$this->whereKey($id);
+
+		return $this->find($id, [$this->model->getPrimaryKey()]) !== false;
 	}
 
 	/**
@@ -223,7 +243,7 @@ class Query
 		$this->query->order('id DESC')
 			->setLimit(1);
 
-		$models = $this->get();
+		$models = $this->get($columns);
 
 		if ($models->isEmpty())
 		{
@@ -343,16 +363,49 @@ class Query
 		 * the developer already specified a subset of columns to be selected.
 		 * @todo add this behaviour everywhere
 		 */
+		$columns = $this->model->convertAliasedToRaw($columns);
+
 		if (is_null($this->query->select) || $columns != ['*'])
 		{
 			$this->query->select($columns);
 		}
 
-		$this->query->from($this->model->getTable());
+		$this->query->from($this->model->getTableName());
 
 		$items = $this->db->setQuery($this->query)->loadAssocList();
 
+		$this->resetQuery();
+
 		return $this->hydrate($items)->all();
+	}
+
+	/**
+	 * Function to get the raw attributes for a row in the table.
+	 *
+	 * @param   mixed  $id      primary key, if there is no key, then this is used for a new item, therefore select last
+	 * @param   array  $columns columns to be selected in query
+	 *
+	 * @internal
+	 * @return mixed
+	 */
+	public function selectRaw($id, $columns = ['*'])
+	{
+		if ($id)
+		{
+			$this->whereKey($id);
+		}
+		else
+		{
+			$this->query->order('id DESC')
+				->setLimit(1);
+		}
+
+		$this->query->from($this->model->getTableName())
+			->select($columns);
+
+		$rawAttributes = $this->db->setQuery($this->query)->loadAssoc();
+
+		return $rawAttributes;
 	}
 
 	/**
@@ -427,6 +480,7 @@ class Query
 		$relation = explode(':', $name)[0];
 		$constrains = explode(':', $name)[1];
 
+		// TODO maybe use Column Aliases here in order to allow "as" in eager loaded relations
 		return [$relation, function ($query) use ($constrains) {
 			$query->select(explode(',', $constrains));
 		}];
@@ -593,5 +647,17 @@ class Query
 	protected function isNestedUnder($relation, $name)
 	{
 		return StringHelper::contains($name, '.') && StringHelper::startWith($name, $relation . '.');
+	}
+
+
+	/**
+	 * Function to reset the DatabaseQuery instance
+	 * Needed in order to reuse the Model and Query instances
+	 *
+	 * @return void
+	 */
+	protected function resetQuery()
+	{
+		$this->query = $this->db->getQuery(true);
 	}
 }

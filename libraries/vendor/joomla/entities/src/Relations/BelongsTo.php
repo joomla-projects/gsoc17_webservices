@@ -80,7 +80,7 @@ class BelongsTo extends Relation
 			 * or has many relation, we need to actually query on the primary key
 			 * of the related models matching on the foreign key that's on a parent.
 			 */
-			$table = $this->related->getTable();
+			$table = $this->related->getTableName();
 
 			$this->query->where($table . '.' . $this->ownerKey . '=' . $this->child->{$this->foreignKey});
 		}
@@ -95,11 +95,11 @@ class BelongsTo extends Relation
 	 */
 	public function addEagerConstraints(array $models)
 	{
-		$key = $this->related->getTable() . '.' . $this->ownerKey;
+		$key = $this->related->getTableName() . '.' . $this->ownerKey;
 
 		$keys = $this->getKeys($models, $this->foreignKey);
 
-		$keys = array_diff($keys, [null]);
+		$keys = array_diff($keys, [null, '*']);
 
 		if (count($keys) > 0)
 		{
