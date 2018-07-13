@@ -58,6 +58,28 @@ trait EntityTableTrait
 	}
 
 	/**
+	 * Reset function
+	 * Will not throw an error if the column does not exist during reset, but it will be thrown when saving the model.
+	 *
+	 * @param   array          $attributes  pre loads any attributed for the model (user friendly format)
+	 *
+	 * @return void
+	 */
+	public function reset(array $attributes = [])
+	{
+		$this->exists = false;
+
+		$this->attributesRaw = [];
+
+		if ($attributes)
+		{
+			$this->setAttributes($attributes);
+		}
+
+		$this->syncOriginal();
+	}
+
+	/**
 	 * Load a row in the current insance
 	 *
 	 * @param   mixed    $key    primary key, if there is no key, then this is used for a new item, therefore select last
