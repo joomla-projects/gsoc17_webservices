@@ -120,6 +120,7 @@ class NoteTable extends UserNote implements TableInterface
 		// Build the WHERE clause for the primary keys.
 		$query->where($k . '=' . implode(' OR ' . $k . '=', $pks));
 
+		// Determine if there is checkin support for the table.
 		if (!$this->hasField('checked_out') || !$this->hasField('checked_out_time'))
 		{
 			$checkin = false;
