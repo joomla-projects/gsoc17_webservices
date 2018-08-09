@@ -571,6 +571,13 @@ class ArticlesModel extends ArticleModel
 	 */
 	public function getAuthors()
 	{
+		/** @todo authors
+		 *
+		 * $authors = $this->author()->get(['id', 'name']);
+		 * $authors->sortByOrdering('u.name');
+		 * return $authors;
+		 */
+
 		// Create a new query object.
 		$db    = $this->getDb();
 		$query = $db->getQuery(true);
