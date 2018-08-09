@@ -87,6 +87,7 @@ class NoteTable extends UserNote implements TableInterface
 	 * @return  boolean  True on success.
 	 *
 	 * @since   2.5
+	 * @throws \Exception
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -107,7 +108,7 @@ class NoteTable extends UserNote implements TableInterface
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				return false;
+				throw new \Exception(\JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 			}
 		}
 

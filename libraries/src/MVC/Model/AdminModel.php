@@ -691,6 +691,7 @@ abstract class AdminModel extends FormModel
 	 * @return  integer|boolean  Boolean false if there is an error, otherwise the count of records checked in.
 	 *
 	 * @since   1.6
+	 * @throws \Exception
 	 */
 	public function checkin($pks = array())
 	{
@@ -729,7 +730,7 @@ abstract class AdminModel extends FormModel
 				else
 				{
 					// Throw exception
-					throw new \Exception("error");
+					throw new \Exception("There was an error while checking in the " . get_class($table));
 				}
 
 				return false;
