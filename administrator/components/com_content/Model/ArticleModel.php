@@ -356,7 +356,8 @@ class ArticleModel extends AdminModel
 
 			$assoc = $workflow->getAssociation($record->id);
 
-			if (!$stage->load($assoc->stage_id) || $stage->condition != ContentComponent::CONDITION_TRASHED)
+			// We allow published items to be directly deleted in the API
+			if (!$stage->load($assoc->stage_id) || $stage->condition != ContentComponent::CONDITION_TRASHED && !\JFactory::getApplication()->isClient('api'))
 			{
 				return false;
 			}

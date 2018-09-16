@@ -204,6 +204,18 @@ class MVCFactory implements MVCFactoryInterface, FormFactoryAwareInterface
 	}
 
 	/**
+	 * Returns the Application object for this factory
+	 *
+	 * @return CMSApplicationInterface
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
+
+	/**
 	 * Returns a standard classname, if the class doesn't exist null is returned.
 	 *
 	 * @param   string  $suffix  The suffix
@@ -213,7 +225,7 @@ class MVCFactory implements MVCFactoryInterface, FormFactoryAwareInterface
 	 *
 	 * @since   4.0.0
 	 */
-	private function getClassName(string $suffix, string $prefix)
+	protected function getClassName(string $suffix, string $prefix)
 	{
 		if (!$prefix)
 		{

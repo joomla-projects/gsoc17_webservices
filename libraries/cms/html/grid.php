@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+use Joomla\Entity\Model;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Factory;
@@ -149,7 +151,7 @@ abstract class JHtmlGrid
 		$user = Factory::getUser();
 		$userid = $user->get('id');
 
-		if ($row instanceof Table)
+		if ($row instanceof Table || $row instanceof Model)
 		{
 			$result = $row->isCheckedOut($userid);
 		}

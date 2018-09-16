@@ -1,0 +1,21 @@
+ArticlesProvider:
+    exclusion_policy: ALL
+    properties:
+        id:
+           expose: true
+        typeAlias:
+           expose: true
+        asset_id:
+           expose: true
+        title:
+            expose: true
+        introtext:
+            expose: true
+        fulltext:
+            expose: true
+        state:
+            expose: true
+        catid:
+            expose: true
+        created:
+            expose: true

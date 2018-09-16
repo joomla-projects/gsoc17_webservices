@@ -96,10 +96,19 @@ class HtmlView extends BaseHtmlView
 
 		$user       = Factory::getUser();
 		$isNew      = ($this->item->id == 0);
-		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 
-		// Since we don't track these assets at the item level, use the category id.
-		$canDo = ContentHelper::getActions('com_users', 'category', $this->item->catid);
+		if ($isNew)
+		{
+			$checkedOut = false;
+			$canDo      = ContentHelper::getActions('com_users');
+		}
+		else
+		{
+			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+
+			// Since we don't track these assets at the item level, use the category id.
+			$canDo = ContentHelper::getActions('com_users', 'category', $this->item->catid);
+		}
 
 		ToolbarHelper::title(Text::_('COM_USERS_NOTES'), 'users user');
 

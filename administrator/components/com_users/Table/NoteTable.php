@@ -11,30 +11,42 @@ namespace Joomla\Component\Users\Administrator\Table;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Table\Table;
-use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Entity\EntityTableFormTrait;
+use Joomla\CMS\Entity\UserNote;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Table\TableInterface;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 /**
  * User notes table class
  *
+ * @note In the user_note table you absolutely need the checked_out and checked_out_time columns
+ *
  * @since  2.5
  */
-class NoteTable extends Table
+class NoteTable extends UserNote implements TableInterface
 {
+	use EntityTableFormTrait;
+
 	/**
 	 * Constructor
 	 *
-	 * @param   DatabaseDriver  $db  Database object
+	 * @param   DatabaseDriver  $db          Database object
+	 * @param   boolean         $loadFields  true if model is preloaded with table columns (null values)
 	 *
+	 * @throws \Exception
 	 * @since  2.5
 	 */
-	public function __construct(DatabaseDriver $db)
+	public function __construct(DatabaseDriver $db, $loadFields = true)
 	{
-		$this->typeAlias = 'com_users.note';
-		parent::__construct('#__user_notes', 'id', $db);
+		$this->setTypeAlias('com_users.note');
+
+		$dispatcher = \JFactory::getApplication()->getDispatcher();
+
+		$this->setDispatcher($dispatcher);
+
+		parent::__construct($db);
 	}
 
 	/**
@@ -48,30 +60,20 @@ class NoteTable extends Table
 	 */
 	public function store($updateNulls = false)
 	{
-		$date = Factory::getDate()->toSql();
-		$userId = Factory::getUser()->get('id');
-
-		if (!((int) $this->review_time))
-		{
-			// Null date.
-			$this->review_time = $this->getDbo()->getNullDate();
-		}
+		$userId = \JFactory::getUser()->get('id');
 
 		if ($this->id)
 		{
-			// Existing item
-			$this->modified_time    = $date;
 			$this->modified_user_id = $userId;
 		}
 		else
 		{
-			// New record.
-			$this->created_time = $date;
+			$this->modified_user_id = 0;
 			$this->created_user_id = $userId;
 		}
 
 		// Attempt to store the data.
-		return parent::store($updateNulls);
+		return $this->persist($updateNulls);
 	}
 
 	/**
@@ -86,6 +88,7 @@ class NoteTable extends Table
 	 * @return  boolean  True on success.
 	 *
 	 * @since   2.5
+	 * @throws \Exception
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -106,15 +109,15 @@ class NoteTable extends Table
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
-
-				return false;
+				throw new \Exception(\JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 			}
 		}
 
-		$query = $this->getDbo()->getQuery(true)
-			->update($this->getDbo()->quoteName($this->_tbl))
-			->set($this->getDbo()->quoteName('state') . ' = ' . (int) $state);
+		$query = $this->getDb()->getQuery(true);
+		$fields = array($this->getColumnAlias('state') . '=' . (int) $state);
+
+		$query->update($this->getTable())
+			->set($fields);
 
 		// Build the WHERE clause for the primary keys.
 		$query->where($k . '=' . implode(' OR ' . $k . '=', $pks));
@@ -131,63 +134,22 @@ class NoteTable extends Table
 		}
 
 		// Update the publishing state for rows with the given primary keys.
-		$this->getDbo()->setQuery($query);
-
-		try
-		{
-			$this->getDbo()->execute();
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->setError($this->getDbo()->getMessage());
-
-			return false;
-		}
+		$this->getDb()->setQuery($query)->execute();
 
 		// If checkin is supported and all rows were adjusted, check them in.
-		if ($checkin && (count($pks) == $this->getDbo()->getAffectedRows()))
+		if ($checkin && count($pks) == $this->getDb()->getAffectedRows())
 		{
 			// Checkin the rows.
 			foreach ($pks as $pk)
 			{
-				$this->checkin($pk);
+				$this->checkIn($pk);
 			}
 		}
 
-		// If the \JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Entity instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks))
 		{
 			$this->state = $state;
-		}
-
-		$this->setError('');
-
-		return true;
-	}
-
-	/**
-	 * Method to perform sanity checks on the Table instance properties to ensure they are safe to store in the database.
-	 *
-	 * @return  boolean  True if the instance is sane and able to be stored in the database.
-	 *
-	 * @since   4.0.0
-	 */
-	public function check()
-	{
-		try
-		{
-			parent::check();
-		}
-		catch (\Exception $e)
-		{
-			$this->setError($e->getMessage());
-
-			return false;
-		}
-
-		if (empty($this->modified_time))
-		{
-			$this->modified_time = $this->getDbo()->getNullDate();
 		}
 
 		return true;

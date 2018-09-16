@@ -60,7 +60,14 @@ class MVCFactoryFactory implements MVCFactoryFactoryInterface, FormFactoryAwareI
 			return new LegacyFactory;
 		}
 
-		$factory = new MVCFactory($this->namespace, $application);
+		if ($application->isClient('api'))
+		{
+			return new ApiMVCFactory($this->namespace, $application);
+		}
+		else
+		{
+			$factory = new MVCFactory($this->namespace, $application);
+		}
 
 		try
 		{

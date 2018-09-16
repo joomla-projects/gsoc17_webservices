@@ -11,8 +11,11 @@ namespace Joomla\Component\Users\Administrator\Model;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Users\Administrator\Table\NoteTable;
 use Joomla\CMS\Factory;
 
 /**
@@ -29,6 +32,26 @@ class NoteModel extends AdminModel
 	 * @since    3.2
 	 */
 	public $typeAlias = 'com_users.note';
+
+	/**
+	 * @var NoteTable
+	 */
+	protected $entity;
+
+	/**
+	 * NoteModel constructor.
+	 *
+	 * @param   array                 $config       An array of configuration options (name, state, dbo, table_path, ignore_request).
+	 * @param   MVCFactoryInterface   $factory      The factory.
+	 * @param   FormFactoryInterface  $formFactory  The form factory.
+	 *
+	 * @throws \Exception
+	 */
+	public function __construct(array $config = array(), MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+	{
+		parent::__construct($config, $factory, $formFactory);
+		$this->entity = new NoteTable($this->getDbo());
+	}
 
 	/**
 	 * Method to get the record form.
@@ -97,7 +120,7 @@ class NoteModel extends AdminModel
 
 		if (empty($data))
 		{
-			$data = $this->getItem();
+			$data = $this->getItem($this->getState($this->getName() . '.id'));
 
 			// Prime some default values.
 			if ($this->getState('note.id') == 0)

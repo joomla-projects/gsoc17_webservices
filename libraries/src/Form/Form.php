@@ -10,6 +10,7 @@ namespace Joomla\CMS\Form;
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\Entity\Model;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
@@ -132,7 +133,6 @@ class Form
 		{
 			return false;
 		}
-
 		$this->bindLevel(null, $data);
 
 		return true;
@@ -162,6 +162,10 @@ class Form
 			{
 				// Handle a CMSObject.
 				$data = $data->getProperties();
+			}
+			elseif ($data instanceof Model)
+			{
+				$data = $data->toArray();
 			}
 			else
 			{
