@@ -10,7 +10,7 @@
  * NOTE: This file should remain compatible with PHP 5.2 to allow us to run our PHP minimum check and show a friendly error message
  */
  
-/**
+/** 
  * Define the application's minimum supported PHP version as a constant so it can be referenced within the application.
  */
 define('JOOMLA_MINIMUM_PHP', '7.0');
